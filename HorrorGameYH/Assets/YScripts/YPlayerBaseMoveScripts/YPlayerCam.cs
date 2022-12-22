@@ -33,7 +33,10 @@ public class YPlayerCam : MonoBehaviour
         //获取鼠标输入
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
+
+        //鼠标左右动，相机绕着y轴转
         yRotation += mouseX;
+        //鼠标上下动，相机绕着x轴转
         xRotation -= mouseY;
 
         xRotation = Mathf.Clamp(xRotation,-90f,90f);
