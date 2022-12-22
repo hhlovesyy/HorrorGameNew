@@ -93,7 +93,22 @@ public class YPlayerCam : MonoBehaviour
 
 ```
 
+![image-20221222181322503](zyy恐怖游戏制作.assets/image-20221222181322503.png)
 
+正的时候往下转
+
+```C#
+        //鼠标左右动，相机绕着y轴转
+        yRotation += mouseX;
+        //鼠标上下动，相机绕着x轴转
+        xRotation -= mouseY;
+```
+
+
+
+unity是左手坐标系 对于所有轴来说 正方向都是顺时针
+
+![image-20221222181722488](zyy恐怖游戏制作.assets/image-20221222181722488.png)
 
 
 
@@ -387,4 +402,67 @@ public class YPlayerMovement : MonoBehaviour
 ## 可以实现的
 
 鬼追赶
+
+https://www.youtube.com/@davegamedevelopment/videos?view=0&sort=dd&shelf_id=0
+
+https://www.jianshu.com/p/1d75b09b4a37
+
+
+
+https://www.youtube.com/watch?v=YdERlPfwUb0
+
+
+
+##### 关于lambda表达式
+
+lambda表达式，表示一个匿名函数，=>前面的是参数，后面的是函数体。
+你可以把它当作一个函数。
+
+举例：
+Func<int, int, int> Add = (x, y) => x + y;
+Console.WriteLine(Add(2, 3)); // 5
+
+
+
+
+
+##### ？
+
+
+
+```cs
+a?.PropertyOfA
+
+string bar = (a == null ? null : a.PropertyOfA);
+```
+
+
+
+
+
+> If you want even more information C# has a System defined Struct called Nullable<T>
+>
+> https://msdn.microsoft.com/en-us/library/b3h38hb0.aspx
+>
+> Code (CSharp):
+>
+> 1. **float**? highAngle;
+>
+> is just shorthand for
+>
+> Code (CSharp):
+>
+> 1. Nullable<**float**> highAngle = [new](http://www.google.com/search?q=new+msdn.microsoft.com) Nullable<**float**>();
+>
+> In general in C# anything that is a reference type variable (like classes) are nullable inherently and can't use the ? syntax
+>
+> Value type variables (floats, int, structs) can't be null so you need to use ? to make them able to equal a null. (this is different than equaling 0).
+>
+> 一般来说，在c#中，任何引用类型变量(如类)本质上都是可空的，不能使用?语法
+>
+> **值类型**变量(浮动，int, structs)不能为空，所以你需要**使用?使它们能够等于null**。(这和等于0不同)
+
+
+
+
 

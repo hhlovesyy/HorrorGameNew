@@ -35,8 +35,8 @@ public class YPlayerMovement : MonoBehaviour
         readyToJump = true;
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
-        groundDrag = 5f;
-        playerHeight = 2f;
+        //groundDrag = 5f;
+        //playerHeight = 2f;
         //whatIsGround = LayerMask.NameToLayer("WhatIsGround");
         //Debug.Log(LayerMask.NameToLayer("WhatIsGround"));
     }
@@ -47,9 +47,15 @@ public class YPlayerMovement : MonoBehaviour
         SpeedControl();
 
         if (grounded)
+        {
+            //Debug.Log("gggg");
             rb.drag = groundDrag;
+        }
         else
+        {
             rb.drag = 0;
+        }
+            
     }
     void myInput()
     {
