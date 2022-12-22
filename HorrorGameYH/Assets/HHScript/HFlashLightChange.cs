@@ -54,9 +54,9 @@ public class HFlashLightChange : MonoBehaviour
         }
         if (energyGettingDown)
         {
-            Debug.Log(Time.deltaTime);
+            //Debug.Log(Time.deltaTime);
             energy -= (int)(Time.deltaTime * energyGettingDownSpeed);
-            Debug.Log(energy);
+            //Debug.Log(energy);
             if (energy <= 0)
             {
                 energy = 0;
