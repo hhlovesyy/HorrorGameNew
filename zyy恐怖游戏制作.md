@@ -399,7 +399,7 @@ public class YPlayerMovement : MonoBehaviour
 
 
 
-## 可以实现的
+## 状态机 敌人AI巡逻追赶
 
 鬼追赶
 
@@ -426,7 +426,7 @@ Console.WriteLine(Add(2, 3)); // 5
 
 
 
-##### ？
+##### ？ 问号表达式
 
 
 
@@ -466,3 +466,224 @@ string bar = (a == null ? null : a.PropertyOfA);
 
 
 
+##### readonly
+
+在[字段声明](https://learn.microsoft.com/zh-cn/dotnet/csharp/language-reference/keywords/readonly#readonly-field-example)中，`readonly` 指示只能在声明期间或在同一个类的**构造函数中向字段赋值**。 可以在字段声明和构造函数中多次分配和重新分配只读字段。
+
+**构造函数退出后，不能分配 `readonly` 字段**。
+
+![image-20221222230726105](zyy恐怖游戏制作.assets/image-20221222230726105.png)
+
+
+
+##### 射线检测
+
+
+
+#####  transform.forward VS vector3.forward
+
+https://answers.unity.com/questions/1311757/difference-between-transformforward-and-vector3for.html
+
+`Vector3.forward` is the unit vector defined by **(0, 0, 1)**
+
+`transform.forward` is the forward direction of the object in the world space. 物体面向的
+
+
+
+##### Physics.SphereCast
+
+当球体扫描与任何碰撞器相交时为true，否则为false。
+
+https://docs.unity3d.com/ScriptReference/Physics.SphereCast.html
+
+public static bool **SphereCast**([Vector3](https://docs.unity3d.com/ScriptReference/Vector3.html) **origin**, float **radius**, [Vector3](https://docs.unity3d.com/ScriptReference/Vector3.html) **direction**, out [RaycastHit](https://docs.unity3d.com/ScriptReference/RaycastHit.html) **hitInfo**, float **maxDistance** = Mathf.Infinity, int **layerMask** = DefaultRaycastLayers, [QueryTriggerInteraction](https://docs.unity3d.com/ScriptReference/QueryTriggerInteraction.html) **queryTriggerInteraction** = QueryTriggerInteraction.UseGlobal);
+
+沿光线投射一个球体，并返回击中物体的详细信息。
+
+当Raycast没有提供足够的精度时，这是很有用的，因为你想知道一个特定大小的对象，比如一个角色，是否能够在不与任何东西碰撞的情况下移动到某个地方。把球体想象成一层厚厚的光线。在这种情况下，射线由起始矢量和方向指定。
+
+
+
+#### Quaternion相关
+
+**Quaternion.LookRotation**
+
+public static [Quaternion](https://docs.unity3d.com/ScriptReference/Quaternion.html) **LookRotation**([Vector3](https://docs.unity3d.com/ScriptReference/Vector3.html) **forward**, [Vector3](https://docs.unity3d.com/ScriptReference/Vector3.html) **upwards** = Vector3.up);
+
+以指定的向前和向上方向创建一个旋转
+
+https://docs.unity3d.com/ScriptReference/Quaternion.LookRotation.html
+
+
+
+ **[Quaternion](https://docs.unity3d.com/cn/2021.1/ScriptReference/Quaternion.html).Slerp**
+
+public static [Quaternion](https://docs.unity3d.com/cn/2021.1/ScriptReference/Quaternion.html) **Slerp** ([Quaternion](https://docs.unity3d.com/cn/2021.1/ScriptReference/Quaternion.html) **a**, [Quaternion](https://docs.unity3d.com/cn/2021.1/ScriptReference/Quaternion.html) **b**, float **t**);
+
+ 参数
+
+| a    | 起始值，当 t = 0 时返回。 |
+| ---- | ------------------------- |
+| b    | 结束值，当 t = 1 时返回。 |
+| t    | 插值比率。                |
+
+返回
+
+**Quaternion** 在四元数 a 和 b 之间进行球形插值的四元数。
+
+ 描述
+
+在四元数 `a` 与 `b` 之间按比率 `t` 进行球形插值。参数 `t` 限制在范围 [0, 1] 内。
+
+这可用于创建一个旋转，以基于参数的值 `a`，在第一个四元数 `a` 到第二个四元数 `b` 之间平滑进行插值。如果参数的值接近于 0，则输出会接近于 /a/，如果参数的值接近于 1，则输出会接近于 /b/。
+
+
+
+![image-20221222230826647](zyy恐怖游戏制作.assets/image-20221222230826647.png)
+
+
+
+![image-20221223104143781](zyy恐怖游戏制作.assets/image-20221223104143781.png)
+
+
+
+
+
+
+
+![image-20221223105916175](zyy恐怖游戏制作.assets/image-20221223105916175.png)
+
+wander
+
+![image-20221223113159239](zyy恐怖游戏制作.assets/image-20221223113159239.png)
+
+![image-20221223110659441](zyy恐怖游戏制作.assets/image-20221223110659441.png)
+
+![image-20221223110752761](zyy恐怖游戏制作.assets/image-20221223110752761.png)
+
+![image-20221223110818500](zyy恐怖游戏制作.assets/image-20221223110818500.png)
+
+![image-20221223110924685](zyy恐怖游戏制作.assets/image-20221223110924685.png)
+
+
+
+attack
+
+![image-20221223111022610](zyy恐怖游戏制作.assets/image-20221223111022610.png)
+
+
+
+statemachine
+
+![image-20221223111108553](zyy恐怖游戏制作.assets/image-20221223111108553.png)
+
+
+
+
+
+```C#
+ Quaternion startingAngle = Quaternion.AngleAxis(-60, Vector3.up);
+    Quaternion stepAngle = Quaternion.AngleAxis(5, Vector3.up);
+    
+    private Transform CheckForAggro()
+    {
+        float aggroRadius = 5f;
+        
+        RaycastHit hit;
+        var angle = transform.rotation * startingAngle;
+        var direction = angle * Vector3.forward;
+        var pos = transform.position;
+        for(var i = 0; i < 24; i++)
+        {
+            if(Physics.Raycast(pos, direction, out hit, aggroRadius))
+            {
+                var drone = hit.collider.GetComponent<Drone>();
+                if(drone != null && drone.Team != gameObject.GetComponent<Drone>().Team)
+                {
+                    Debug.DrawRay(pos, direction * hit.distance, Color.red);
+                    return drone.transform;
+                }
+                else
+                {
+                    Debug.DrawRay(pos, direction * hit.distance, Color.yellow);
+                }
+            }
+            else
+            {
+                Debug.DrawRay(pos, direction * aggroRadius, Color.white);
+            }
+            direction = stepAngle * direction;
+        }
+
+        return null;
+    }
+}
+
+```
+
+
+
+#### 单例模式
+
+https://developer.aliyun.com/article/239654
+
+
+
+调用单例模式的方法:
+
+```C#
+            YUIManager litjson = YUIManager.getInstance() as YUIManager;
+            litjson.flashScreen();
+```
+
+
+
+### navMes寻路
+
+https://youtu.be/atCOd4o7tG4
+
+![image-20221228113858184](zyy恐怖游戏制作.assets/image-20221228113858184.png)
+
+
+
+##### 地板
+
+给我们的地板添加一个：
+
+![image-20221228114059481](zyy恐怖游戏制作.assets/image-20221228114059481.png)
+
+这个表明他是不会移动的
+
+![image-20221228114210865](zyy恐怖游戏制作.assets/image-20221228114210865.png)
+
+
+
+然后bake
+
+![image-20221228114247477](zyy恐怖游戏制作.assets/image-20221228114247477.png)
+
+
+
+##### 路障
+
+![image-20221228114452486](zyy恐怖游戏制作.assets/image-20221228114452486.png)
+
+
+
+##### 寻路者
+
+![image-20221228114801683](zyy恐怖游戏制作.assets/image-20221228114801683.png)
+
+```C#
+ patrolAI.mNavMeshAgent.destination = patrolAI.mTarget.position;
+```
+
+![image-20221228115626070](zyy恐怖游戏制作.assets/image-20221228115626070.png)
+
+
+
+
+
+## 想继续加的
+
+看到之后改变灯的颜色
