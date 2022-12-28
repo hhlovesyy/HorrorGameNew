@@ -11,7 +11,7 @@ public class LightFlickerEffect : MonoBehaviour
     [Tooltip("Maximum random light intensity")]
     public float maxIntensity = 1f;
     [Tooltip("How much to smooth out the randomness; lower values = sparks, higher = lantern")]
-    [Range(1, 50)]
+    [Range(1, 100)]
     public int smoothing = 5;
 
     // Continuous average calculation via FIFO queue
@@ -29,6 +29,17 @@ public class LightFlickerEffect : MonoBehaviour
     {
         smoothQueue.Clear();
         lastSum = 0;
+    }
+
+    public void SetLightAttr(int energy)
+    {
+        if (!light) return;
+        maxIntensity = energy / 10;
+        smoothing = energy / 12;
+        if (smoothing <= 0) smoothing = 10;
+        //Debug.Log("down!!");
+        //Debug.Log(smoothing);
+        //Debug.Log(maxIntensity);
     }
 
     void Start()

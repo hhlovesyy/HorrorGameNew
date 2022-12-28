@@ -654,7 +654,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 813c69e863db6bd418e5b865a6bef1b5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -713,7 +713,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isOn: 0
   lightSource: {fileID: 1763099391}
-  energyGettingDownSpeed: 100
+  energyGettingDownSpeed: 200
   energyDownInterval: 5
 --- !u!1 &724719168
 GameObject:
@@ -1881,7 +1881,7 @@ MonoBehaviour:
   light: {fileID: 0}
   minIntensity: 1
   maxIntensity: 100
-  smoothing: 7
+  smoothing: 40
 --- !u!1 &1904490644
 GameObject:
   m_ObjectHideFlags: 0

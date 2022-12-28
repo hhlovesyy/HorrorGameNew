@@ -6,34 +6,36 @@ public class HFlashLightChange : MonoBehaviour
 {
     public bool isOn;
     public GameObject lightSource;
-    private float energy;
+    private int energy;
     private bool energyGettingDown;
-    private Light spotLightAttr;
     public float energyGettingDownSpeed = 100f;
     public float energyDownInterval = 5f; //往下下降的幅度,一次下降多少energy
 
     private bool canUseFlashLight;
+    private LightFlickerEffect lightFlickereffect;
+    private int count = 0;
+
+    public void GettingABattery()
+    {
+
+    }
 
     // Start is called before the first frame update
     void Start()
     {
         isOn = false;
         lightSource.SetActive(isOn);
-
-        energy = 1000f;
+        energy = 1000;
         energyGettingDown = false;
-        spotLightAttr = lightSource.gameObject.GetComponent<Light>();
-        if (!spotLightAttr)
-        {
-            Debug.LogError("手电筒发出的光没有light属性!请检查!");
-        }
         canUseFlashLight = true;
+        lightFlickereffect = lightSource.gameObject.GetComponent<LightFlickerEffect>();
+        if (!lightFlickereffect)
+        {
+            Debug.LogError("光源上面没有Flicker脚本!请检查!");
+        }
+        count = 0;
     }
 
-    void SettingLight(int energyVal)
-    {
-
-    }
 
     // Update is called once per frame
     void Update()
@@ -55,6 +57,7 @@ public class HFlashLightChange : MonoBehaviour
         if (energyGettingDown)
         {
             //Debug.Log(Time.deltaTime);
+            count++;
             energy -= (int)(Time.deltaTime * energyGettingDownSpeed);
             //Debug.Log(energy);
             if (energy <= 0)
@@ -65,9 +68,13 @@ public class HFlashLightChange : MonoBehaviour
                 canUseFlashLight = false;
             }
 
-            if (energy % 100 == 0)
+            if (count % 100 == 0)
             {
                 //Debug.Log("Biscuit!"+energy.ToString());
+                if (lightFlickereffect)
+                {
+                    lightFlickereffect.SetLightAttr(energy);
+                }
             }
             
         }

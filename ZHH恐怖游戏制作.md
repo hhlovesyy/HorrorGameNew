@@ -12,9 +12,19 @@
 
 用Shader Graph实现的Glitch效果.
 
-新建一个Lit Shader Graph(在URP管线下),然后这样连线:
+(1)新建一个Lit Shader Graph(在URP管线下),然后这样连线:
+
+<img src="ZHH%E6%81%90%E6%80%96%E6%B8%B8%E6%88%8F%E5%88%B6%E4%BD%9C.assets/image-20221223154919550.png" alt="image-20221223154919550" style="zoom: 67%;" />
+
+上图的操作是,将UV的G通道提取出来(提取完之后应该是一维的数据,参考Split官方文档,Split之后的结果的每一行是一个单独的值,对应纹理的V坐标),将Split之后的结果对Simple Noise结点进行采样,**此时需要注意的是由于Unity Shader Graph中对纹理采样需要一个二维的向量,因此会把G通道的值复制两边成为(G,G)向量,再去进行采样**,所以实际上上图采样后的结果的每一行的纹素值对应初始噪声图(X,X)位置的纹理坐标.上面这张图的连线等同于下面这张图:
+
+<img src="ZHH%E6%81%90%E6%80%96%E6%B8%B8%E6%88%8F%E5%88%B6%E4%BD%9C.assets/image-20221223160119340.png" alt="image-20221223160119340" style="zoom:80%;" />
 
 
+
+(2)进行Remap操作,并添加一个Time采样的结点
+
+![image-20221223162444157](ZHH%E6%81%90%E6%80%96%E6%B8%B8%E6%88%8F%E5%88%B6%E4%BD%9C.assets/image-20221223162444157.png)
 
 
 
