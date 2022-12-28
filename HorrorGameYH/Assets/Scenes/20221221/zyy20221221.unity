@@ -515,7 +515,7 @@ Light:
   m_Type: 1
   m_Shape: 0
   m_Color: {r: 0.51676756, g: 0.63767695, b: 0.7169812, a: 1}
-  m_Intensity: 1.14
+  m_Intensity: 0.04
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -527,7 +527,7 @@ Light:
     m_Strength: 1
     m_Bias: 0.05
     m_NormalBias: 0.4
-    m_NearPlane: 0.2
+    m_NearPlane: 0.1
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -1662,6 +1662,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: YPatrolAINew (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 105946533983207811, guid: 5039f26ac40c59c4fa46e1edd63c0794, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5039f26ac40c59c4fa46e1edd63c0794, type: 3}
 --- !u!1001 &737785909
@@ -1718,6 +1722,10 @@ PrefabInstance:
     - target: {fileID: 105946533983207811, guid: 5039f26ac40c59c4fa46e1edd63c0794, type: 3}
       propertyPath: m_Name
       value: YPatrolAINew (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 105946533983207811, guid: 5039f26ac40c59c4fa46e1edd63c0794, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5039f26ac40c59c4fa46e1edd63c0794, type: 3}
@@ -1949,6 +1957,7 @@ MonoBehaviour:
   flashTimerTemp: 1
   beginFlash: 0
   flashStep: 2
+  shakeCamera: {fileID: 7876303579810144796}
 --- !u!4 &831008589
 Transform:
   m_ObjectHideFlags: 0
@@ -2672,6 +2681,10 @@ PrefabInstance:
     - target: {fileID: 105946533983207811, guid: 5039f26ac40c59c4fa46e1edd63c0794, type: 3}
       propertyPath: m_Name
       value: YPatrolAINew
+      objectReference: {fileID: 0}
+    - target: {fileID: 105946533983207811, guid: 5039f26ac40c59c4fa46e1edd63c0794, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5039f26ac40c59c4fa46e1edd63c0794, type: 3}
@@ -4639,6 +4652,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PatrolAI1
       objectReference: {fileID: 0}
+    - target: {fileID: 105946533983207811, guid: 5039f26ac40c59c4fa46e1edd63c0794, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 5551454774398182709, guid: 5039f26ac40c59c4fa46e1edd63c0794, type: 3}
       propertyPath: m_Intensity
       value: 700
@@ -6182,13 +6199,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d353e02d85db1d342bef60b28cda326b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 5
+  moveSpeed: 10
   groundDrag: 3
   jumpKey: 32
-  jumpForce: 5
+  jumpForce: 15
   jumpCooldown: 0.25
-  airMultiplier: 0.4
-  playerHeight: 2
+  airMultiplier: 0.001
+  playerHeight: 1.23514
   whatIsGround:
     serializedVersion: 2
     m_Bits: 64
@@ -6201,7 +6218,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7142811082945581931}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1

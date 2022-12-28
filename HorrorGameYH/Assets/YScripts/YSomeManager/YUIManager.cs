@@ -14,6 +14,8 @@ public class YUIManager : MonoBehaviour
     public float flashTimerTemp=2f;
     public bool beginFlash;
     public float flashStep;
+
+    public Camera shakeCamera;
     public static YUIManager Instance { get; private set; }
     private void Awake()
     {
@@ -49,6 +51,28 @@ public class YUIManager : MonoBehaviour
     //    BloodImage.color = defaultColor;
     //}
 
+    public IEnumerator Shake(float duration, float magnitude)
+    {
+        Vector3 orignalPosition = shakeCamera.transform.position;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            float x = Random.Range(-1f, 1f) * magnitude;
+            float y = Random.Range(-1f, 1f) * magnitude;
+            float z = Random.Range(-1f, 1f) * magnitude;
+            //shakeCamera.transform.position = new Vector3(x, y, -10f);
+            shakeCamera.transform.position += new Vector3(x, y, z);
+            elapsed += Time.deltaTime;
+            yield return 0;
+        }
+        shakeCamera.transform.position = orignalPosition;
+    }
+
+    public void cameraShakeFunc()
+    {
+        StartCoroutine(Shake(2f, 0.01f));
+    }
+
     private void Update()
     {
         if(beginFlash)
@@ -74,4 +98,6 @@ public class YUIManager : MonoBehaviour
         }
         
     }
+
+
 }

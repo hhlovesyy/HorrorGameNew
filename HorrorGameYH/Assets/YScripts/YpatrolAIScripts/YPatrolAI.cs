@@ -57,7 +57,9 @@ public class YPatrolAI : MonoBehaviour
         //UI部分 如果攻击到了
         YUIManager litjson = YUIManager.getInstance() as YUIManager;
         litjson.flashScreen();
+        litjson.cameraShakeFunc();
     }
+
 }
 public enum Team
 {
