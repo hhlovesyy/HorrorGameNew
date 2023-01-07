@@ -34,6 +34,13 @@ public class YPlayerMovement : MonoBehaviour
     Vector3 moveDiretion;
 
     public Animator PlayerAnimator;
+    
+    [Header(("camera"))]
+    private bool changeCameraFlag = false;
+
+    public GameObject cameraFirstPer;
+    public GameObject cameraThirdPer;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -95,6 +102,13 @@ public class YPlayerMovement : MonoBehaviour
             readyToJump = false;
             Jump();
             Invoke(nameof(resetJump),jumpCooldown);
+        }
+
+        if (Input.GetKey(KeyCode.U))
+        {
+            changeCameraFlag = !changeCameraFlag;
+            cameraFirstPer.SetActive(changeCameraFlag);
+            cameraThirdPer.SetActive(!changeCameraFlag);
         }
     }
     private void FixedUpdate()
