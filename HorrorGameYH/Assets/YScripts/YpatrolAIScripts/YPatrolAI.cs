@@ -12,6 +12,8 @@ public class YPatrolAI : MonoBehaviour
     [SerializeField] private GameObject laserVisual;
     public Animator animator;
 
+    public GameObject mCamera;
+    public YMoveCamera moveCameraScripts;
     //我们希望能够读取目标 但是不能设置目标 比如敌方机器可以读取我们的位置但是不能设置我们的位置等
     public Transform mTarget { get; private set; }
 
@@ -34,6 +36,7 @@ public class YPatrolAI : MonoBehaviour
     private void Start()
     {
         //animator = gameObject.GetComponentInChildren<Animator>();
+        moveCameraScripts = mCamera.GetComponent<YMoveCamera>();
     }
     private void InitStateMachine()
     {
@@ -55,9 +58,11 @@ public class YPatrolAI : MonoBehaviour
     public void AttackFunc()
     {
         //UI部分 如果攻击到了
-        YUIManager litjson = YUIManager.getInstance() as YUIManager;
-        litjson.flashScreen();
-        litjson.cameraShakeFunc();
+        YUIManager uiManager = YUIManager.getInstance() as YUIManager;
+        uiManager.flashScreen();
+        uiManager.shakeScreen();
+        //moveCameraScripts.cameraShakeFunc();
+        //litjson.cameraShakeFunc();
     }
 
 }

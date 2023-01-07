@@ -30,7 +30,7 @@ public class YWanderState : YBaseState
         if(chaseTarget)
         {
             partrolAI.setTarget(chaseTarget);
-            //partrolAI.animator.SetInteger("AnimState", 1);
+            partrolAI.animator.SetInteger("AnimState", 1);
             if (partrolAI.SpotLightWander) partrolAI.SpotLightWander.SetActive(false);
             if (partrolAI.SpotLightChase) partrolAI.SpotLightChase.SetActive(true);
             return typeof(YChaseState);
@@ -117,7 +117,6 @@ public class YWanderState : YBaseState
     //я╟урд©╠Й
     private Transform CheckForAggro()
     {
-
         RaycastHit hit;
         var angle = transform.rotation * startingAngle;
         var direction = angle * Vector3.forward;
@@ -131,17 +130,17 @@ public class YWanderState : YBaseState
                 var aTargetLayer = hit.collider.gameObject;
 
                 //if (aTarget != null && aTarget.team != gameObject.GetComponent<YPatrolAI>().team)
-                if (aTarget != null)
-                {
-                    Debug.DrawRay(pos, direction * hit.distance, Color.red);
-                    return aTarget.transform;
-                }
-                else if (aTargetLayer.layer.ToString() == "Yplayer")
-                {
-                    Debug.DrawRay(pos, direction * hit.distance, Color.blue);
-                    return aTargetLayer.transform;
-                }
-                else if(aTargetLayer.tag=="Player")
+                // if (aTarget != null)
+                // {
+                //     Debug.DrawRay(pos, direction * hit.distance, Color.red);
+                //     return aTarget.transform;
+                // }
+                // else if (aTargetLayer.layer.ToString() == "Yplayer")
+                // {
+                //     Debug.DrawRay(pos, direction * hit.distance, Color.blue);
+                //     return aTargetLayer.transform;
+                // }
+                if(aTargetLayer.tag=="Player")
                 {
                     Debug.DrawRay(pos, direction * hit.distance, Color.blue);
                     return aTargetLayer.transform;

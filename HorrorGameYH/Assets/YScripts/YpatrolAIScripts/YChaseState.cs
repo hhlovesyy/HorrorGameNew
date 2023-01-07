@@ -19,7 +19,7 @@ public class YChaseState : YBaseState
             return typeof(YWanderState);
         }
 
-        //transform.LookAt(patrolAI.mTarget);
+        transform.LookAt(patrolAI.mTarget);
         //transform.Translate(Vector3.forward*Time.deltaTime*YGameSetting.PatrolAISpeed);
         patrolAI.mNavMeshAgent.destination = patrolAI.mTarget.position;
 

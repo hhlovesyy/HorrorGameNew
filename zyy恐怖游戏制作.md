@@ -539,6 +539,22 @@ public static [Quaternion](https://docs.unity3d.com/cn/2021.1/ScriptReference/Qu
 
 
 
+#### event Action<>
+
+https://cloud.tencent.com/developer/article/1710289
+
+```C#
+public event Action<YBaseState> OnStateChanged;
+...
+OnStateChanged?.Invoke(CurrentState);
+```
+
+
+
+#### 参考来源
+
+
+
 ![image-20221222230826647](zyy恐怖游戏制作.assets/image-20221222230826647.png)
 
 
@@ -679,6 +695,127 @@ https://youtu.be/atCOd4o7tG4
 ```
 
 ![image-20221228115626070](zyy恐怖游戏制作.assets/image-20221228115626070.png)
+
+
+
+
+
+
+
+## 屏幕效果相关
+
+下面两个效果都放在manager中
+
+
+
+#### 屏幕流血效果
+
+```C#
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class YUIManager : MonoBehaviour
+{
+    public Image pBloodImage;
+    public static Image BloodImage => Instance.pBloodImage;
+
+    public Color defaultColor;
+    public Color flashColor;
+    public float flashTimer=2f;
+    public float flashTimerTemp=2f;
+    public bool beginFlash;
+    public float flashStep;
+    public bool bShakeCamera;
+    //public float magnitude = 10000f;
+
+    private Vector3 v3Shake = new Vector3(-0.5f,0.6f,0f);
+    public Vector3 defaultv3 = new Vector3(0,0,0);
+    public Camera shakeCamera;
+    public static YUIManager Instance { get; private set; }
+    private void Awake()
+    {
+        if (Instance)
+        {
+            Destroy(gameObject);
+        }
+        else
+        {
+            Instance = this;
+        }
+    }
+
+    public void Start()
+    {
+        defaultColor = BloodImage.color;
+    }
+
+    public static object getInstance()
+    {
+        return Instance;
+    }
+
+    public void flashScreen()
+    {
+        beginFlash = true;
+        //StartCoroutine(flash());
+    }
+    public void shakeScreen()
+    {
+        bShakeCamera = true;
+    }
+    private void Update()
+    {
+        if(beginFlash)
+        {
+            Debug.Log(shakeCamera.transform.position.x);
+            flashTimerTemp -= Time.deltaTime * flashStep;
+            if(flashTimerTemp > 1)
+            {
+                BloodImage.color =
+                Color.Lerp(flashColor, defaultColor, flashTimerTemp);
+
+                if(bShakeCamera)
+                shakeCamera.transform.localPosition
+                    = Vector3.Lerp(defaultv3, v3Shake, flashTimerTemp);
+            }
+            else if (flashTimerTemp <=1&& flashTimerTemp > 0)
+            {
+                BloodImage.color =
+                Color.Lerp(defaultColor, flashColor, flashTimerTemp);
+
+                if (bShakeCamera)
+                    shakeCamera.transform.localPosition
+                   = Vector3.Lerp(v3Shake, defaultv3, flashTimerTemp);
+            }
+            else if (flashTimerTemp <= 0) 
+            {
+                Debug.Log("flashOver");
+                beginFlash = false;
+                flashTimerTemp = flashTimer;
+                BloodImage.color = defaultColor;
+
+                shakeCamera.transform.localPosition = defaultv3;
+            }
+        }
+
+    }
+
+
+}
+
+```
+
+
+
+#### 屏幕震动
+
+这里采用的方法是直接震动相机
+
+和上面那个一样的原理 放在上面了
+
+我们使用 **localPosition** 设置相对位置，直接用position的话。用的是绝对位置，会出错，要小心。
 
 
 
