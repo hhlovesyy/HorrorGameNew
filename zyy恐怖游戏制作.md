@@ -504,9 +504,13 @@ public static bool **SphereCast**([Vector3](https://docs.unity3d.com/ScriptRefer
 
 
 
-#### Quaternion相关
+#### Quaternion相关 欧拉角相关
 
-**Quaternion.LookRotation**
+[Unity - Scripting API: Quaternion (unity3d.com)](https://docs.unity3d.com/ScriptReference/Quaternion.html)
+
+
+
+##### **Quaternion.LookRotation**
 
 public static [Quaternion](https://docs.unity3d.com/ScriptReference/Quaternion.html) **LookRotation**([Vector3](https://docs.unity3d.com/ScriptReference/Vector3.html) **forward**, [Vector3](https://docs.unity3d.com/ScriptReference/Vector3.html) **upwards** = Vector3.up);
 
@@ -516,7 +520,7 @@ https://docs.unity3d.com/ScriptReference/Quaternion.LookRotation.html
 
 
 
- **[Quaternion](https://docs.unity3d.com/cn/2021.1/ScriptReference/Quaternion.html).Slerp**
+#####  **[Quaternion](https://docs.unity3d.com/cn/2021.1/ScriptReference/Quaternion.html).Slerp**
 
 public static [Quaternion](https://docs.unity3d.com/cn/2021.1/ScriptReference/Quaternion.html) **Slerp** ([Quaternion](https://docs.unity3d.com/cn/2021.1/ScriptReference/Quaternion.html) **a**, [Quaternion](https://docs.unity3d.com/cn/2021.1/ScriptReference/Quaternion.html) **b**, float **t**);
 
@@ -536,6 +540,56 @@ public static [Quaternion](https://docs.unity3d.com/cn/2021.1/ScriptReference/Qu
 在四元数 `a` 与 `b` 之间按比率 `t` 进行球形插值。参数 `t` 限制在范围 [0, 1] 内。
 
 这可用于创建一个旋转，以基于参数的值 `a`，在第一个四元数 `a` 到第二个四元数 `b` 之间平滑进行插值。如果参数的值接近于 0，则输出会接近于 /a/，如果参数的值接近于 1，则输出会接近于 /b/。
+
+
+
+#####  **欧拉角与vector3互转**
+
+https://blog.csdn.net/m0_37763682/article/details/107461513
+
+```C#
+//四元数转化成欧拉角    eulerAngles为Quaternion类的一个Get方法 均可直接调用
+Vector3 p = transform.rotation.eulerAngles;
+
+//欧拉角转换成四元数     
+Quaternion rotation = Quaternion.Euler(p)
+```
+
+
+
+##### 项目相关源码
+
+这里我们完成
+
+[物体移动时，面朝移动方向旋转_CXW30的博客-CSDN博客_移动方向的前方怎么表述](https://blog.csdn.net/qq_32605447/article/details/90693227)、
+
+[Unity Vector3与Quaternion相互转换_Parkergh的博客-CSDN博客_quaternion转vector3](https://blog.csdn.net/m0_37763682/article/details/107461513)
+
+```C#
+ private void MovePlayer()
+    {
+        //计算移动方向
+        moveDiretion = orientation.forward * verticalInput + orientation.right * horizontalInput;
+        if(grounded)
+            rb.AddForce(moveDiretion.normalized * moveSpeed * 10f, ForceMode.Force);
+        if (!grounded)
+            rb.AddForce(moveDiretion.normalized*moveSpeed*10f*airMultiplier,ForceMode.Force);
+        
+        //使主角要移动时，面向要旋转的方向，且必须避免镜头看天空或者地面时，角色也跟着转动
+        //[物体移动时，面朝移动方向旋转_CXW30的博客-CSDN博客_移动方向的前方怎么表述](https://blog.csdn.net/qq_32605447/article/details/90693227)
+        //[Unity Vector3与Quaternion相互转换_Parkergh的博客-CSDN博客_quaternion转vector3](https://blog.csdn.net/m0_37763682/article/details/107461513)
+        Quaternion lookRot = Quaternion.LookRotation(moveDiretion);    //dir为前方节点的pos
+        Vector3 lookR = lookRot.eulerAngles;
+        //也就是说 角色只能绕着y轴转动
+        lookR = new Vector3(0f,lookR.y,0f);
+        lookRot = Quaternion.Euler(lookR);
+
+        transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Mathf.Clamp01(rotSpeed * Time.deltaTime));
+
+    }
+```
+
+
 
 
 
@@ -651,6 +705,8 @@ https://developer.aliyun.com/article/239654
             YUIManager litjson = YUIManager.getInstance() as YUIManager;
             litjson.flashScreen();
 ```
+
+
 
 
 
@@ -819,7 +875,19 @@ public class YUIManager : MonoBehaviour
 
 
 
+## 动画相关
 
+#### Unity Animator 切换动作时物体的位置发生变化
+
+https://blog.csdn.net/weixin_41767230/article/details/109356322
+
+
+
+重新back一下animation就可以了 （造成问题可能是因为它是基于上一个动画的动作？我也不太懂
+
+![在这里插入图片描述](zyy恐怖游戏制作.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3dlaXhpbl80MTc2NzIzMA==,size_16,color_FFFFFF,t_70#pic_center.jpeg)
+
+![image-20230107124750571](zyy恐怖游戏制作.assets/image-20230107124750571.png)
 
 ## 想继续加的
 

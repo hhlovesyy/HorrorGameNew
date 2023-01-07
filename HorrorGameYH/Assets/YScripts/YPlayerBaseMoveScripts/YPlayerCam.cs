@@ -10,7 +10,7 @@ public class YPlayerCam : MonoBehaviour
 
     //[ orientation方向] 这个放角色
     public Transform orientation;
-
+    //public GameObject playerGo;
     float xRotation;
     float yRotation;
 
@@ -45,5 +45,6 @@ public class YPlayerCam : MonoBehaviour
         transform.rotation = Quaternion.Euler(xRotation,yRotation,0);
         //同时旋转角色
         orientation.transform.rotation = Quaternion.Euler(xRotation,yRotation,0);
+        //playerGo.transform.rotation = Quaternion.Euler(xRotation,yRotation,0);
     }
 }

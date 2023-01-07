@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class YPlayerMovement : MonoBehaviour
@@ -7,7 +8,9 @@ public class YPlayerMovement : MonoBehaviour
     [Header("Movement")]
     public float moveSpeed;
 
+    public float rotSpeed;
     public float groundDrag;
+    public GameObject playerGo; 
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -29,6 +32,8 @@ public class YPlayerMovement : MonoBehaviour
     float verticalInput;
     public Transform orientation;
     Vector3 moveDiretion;
+
+    public Animator PlayerAnimator;
     // Start is called before the first frame update
     void Start()
     {
@@ -62,6 +67,28 @@ public class YPlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
+        if (Mathf.Abs(horizontalInput)>0.01f ||Mathf.Abs( verticalInput)>0.01f)
+        {
+            PlayerAnimator.SetInteger("AnimState",1);
+            
+            moveDiretion = orientation.forward * verticalInput + orientation.right * horizontalInput;
+
+            //使主角要移动时，面向要旋转的方向，且必须避免镜头看天空或者地面时，角色也跟着转动
+            //[物体移动时，面朝移动方向旋转_CXW30的博客-CSDN博客_移动方向的前方怎么表述](https://blog.csdn.net/qq_32605447/article/details/90693227)
+            //[Unity Vector3与Quaternion相互转换_Parkergh的博客-CSDN博客_quaternion转vector3](https://blog.csdn.net/m0_37763682/article/details/107461513)
+            Quaternion lookRot = Quaternion.LookRotation(moveDiretion);    //dir为前方节点的pos
+            Vector3 lookR = lookRot.eulerAngles;
+            //也就是说 角色只能绕着y轴转动
+            lookR = new Vector3(0f,lookR.y,0f);
+            lookRot = Quaternion.Euler(lookR);
+
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Mathf.Clamp01(rotSpeed * Time.deltaTime));
+        }
+        else
+        {
+            PlayerAnimator.SetInteger("AnimState",0);
+        }
+
         //什么时候跳
         if(Input.GetKey(jumpKey)&&readyToJump&&grounded)
         {
@@ -82,6 +109,9 @@ public class YPlayerMovement : MonoBehaviour
             rb.AddForce(moveDiretion.normalized * moveSpeed * 10f, ForceMode.Force);
         if (!grounded)
             rb.AddForce(moveDiretion.normalized*moveSpeed*10f*airMultiplier,ForceMode.Force);
+        
+        
+        
     }
     private void SpeedControl()
     {
