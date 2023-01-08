@@ -34,10 +34,11 @@ public class YPlayerMovement : MonoBehaviour
     Vector3 moveDiretion;
 
     public Animator PlayerAnimator;
-    
-    [Header(("camera"))]
-    private bool changeCameraFlag = false;
 
+    [Header(("camera"))]
+    //private bool changeCameraFlag = false;
+    private bool changeCameraFlag = true;
+    
     public GameObject cameraFirstPer;
     public GameObject cameraThirdPer;
     
@@ -51,6 +52,7 @@ public class YPlayerMovement : MonoBehaviour
         //playerHeight = 2f;
         //whatIsGround = LayerMask.NameToLayer("WhatIsGround");
         //Debug.Log(LayerMask.NameToLayer("WhatIsGround"));
+        changeCameraFlag = true;
     }
     void Update()
     {

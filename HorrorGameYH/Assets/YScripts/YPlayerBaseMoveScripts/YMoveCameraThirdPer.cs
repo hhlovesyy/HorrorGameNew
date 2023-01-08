@@ -4,7 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
  
 public class YMoveCameraThirdPer: MonoBehaviour {
-    private GameObject target;//声明注视目标
+    //private GameObject target;//声明注视目标
+    public GameObject target;
     public float distance = 3;//摄像机和目标的直线距离
     //横向旋转所需变量
     public float rot = 0;//横向角度
@@ -21,7 +22,7 @@ public class YMoveCameraThirdPer: MonoBehaviour {
     //[ orientation方向] 这个放相机应该面向的方向
     public Transform orientation;
 	void Start () {
-        target = GameObject.Find("Player");//获得注视目标
+        //target = GameObject.Find("Player");//获得注视目标
 	}
     void LateUpdate()
     {
@@ -43,7 +44,7 @@ public class YMoveCameraThirdPer: MonoBehaviour {
         cameraPos.y = targetPos.y + height;//获得相机y坐标
         Camera.main.transform.position = cameraPos;//确定摄像机坐标
         Camera.main.transform.LookAt(target.transform);//注视目标
-        
+
         //orientation.transform.rotation = Quaternion.Euler(0,rot,0);
         orientation.transform.forward = Camera.main.transform.forward;
         orientation.transform.right = Camera.main.transform.right;
