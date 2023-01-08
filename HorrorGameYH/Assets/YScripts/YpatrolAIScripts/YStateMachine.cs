@@ -38,7 +38,10 @@ public class YStateMachine : MonoBehaviour
 
     private void switchState(Type nextState)
     {
-        CurrentState = mDicAvailStates[nextState];
-        OnStateChanged?.Invoke(CurrentState);
+        if (nextState != null)
+        {
+            CurrentState = mDicAvailStates[nextState];
+            OnStateChanged?.Invoke(CurrentState);
+        }
     }
 }

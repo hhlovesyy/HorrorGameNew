@@ -10,7 +10,7 @@ public class YPlayerMovement : MonoBehaviour
 
     public float rotSpeed;
     public float groundDrag;
-    public GameObject playerGo; 
+    private GameObject playerGo; 
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -33,11 +33,10 @@ public class YPlayerMovement : MonoBehaviour
     public Transform orientation;
     Vector3 moveDiretion;
 
-    public Animator PlayerAnimator;
 
+    public Animator PlayerAnimator;
     [Header(("camera"))]
-    //private bool changeCameraFlag = false;
-    private bool changeCameraFlag = true;
+    private bool changeCameraFlag = false;
     
     public GameObject cameraFirstPer;
     public GameObject cameraThirdPer;
@@ -52,7 +51,8 @@ public class YPlayerMovement : MonoBehaviour
         //playerHeight = 2f;
         //whatIsGround = LayerMask.NameToLayer("WhatIsGround");
         //Debug.Log(LayerMask.NameToLayer("WhatIsGround"));
-        changeCameraFlag = true;
+        PlayerAnimator = GetComponentInChildren<Animator>();
+        playerGo = PlayerAnimator.gameObject;
     }
     void Update()
     {
@@ -125,9 +125,6 @@ public class YPlayerMovement : MonoBehaviour
             rb.AddForce(moveDiretion.normalized * moveSpeed * 10f, ForceMode.Force);
         if (!grounded)
             rb.AddForce(moveDiretion.normalized*moveSpeed*10f*airMultiplier,ForceMode.Force);
-        
-        
-        
     }
     private void SpeedControl()
     {
@@ -150,5 +147,11 @@ public class YPlayerMovement : MonoBehaviour
     public void resetJump()
     {
         readyToJump = true;
+    }
+
+    public void changeCharWhenSwitch()
+    {
+        PlayerAnimator = GetComponentInChildren<Animator>();
+        playerGo = PlayerAnimator.gameObject;
     }
 }
