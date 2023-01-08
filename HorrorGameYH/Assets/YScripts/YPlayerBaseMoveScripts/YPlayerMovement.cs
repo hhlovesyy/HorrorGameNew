@@ -32,9 +32,8 @@ public class YPlayerMovement : MonoBehaviour
     float verticalInput;
     public Transform orientation;
     Vector3 moveDiretion;
-
-    private Animator PlayerAnimator;
     
+    private Animator PlayerAnimator;
     [Header(("camera"))]
     private bool changeCameraFlag = false;
 
