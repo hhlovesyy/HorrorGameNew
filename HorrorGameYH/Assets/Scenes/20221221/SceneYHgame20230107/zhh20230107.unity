@@ -772,7 +772,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64921090dd5492047a20542eb037eaaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 284273220}
   distance: 3
   rot: 0
   rotSpeed: 8
@@ -1698,6 +1697,63 @@ Transform:
   m_Father: {fileID: 452056955}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &160705272
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_RootOrder
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 83e0637c486f08240904d90c6c617204, type: 3}
+      propertyPath: m_Name
+      value: TestGanyu
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 83e0637c486f08240904d90c6c617204, type: 3}
 --- !u!1 &161481761
 GameObject:
   m_ObjectHideFlags: 0
@@ -2446,7 +2502,6 @@ MonoBehaviour:
   moveSpeed: 13
   rotSpeed: 10
   groundDrag: 3
-  playerGo: {fileID: 919132149129257883}
   jumpKey: 32
   jumpForce: 15
   jumpCooldown: 0.25
@@ -2456,7 +2511,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   orientation: {fileID: 1134748677}
-  PlayerAnimator: {fileID: 5866666021941683035}
   cameraFirstPer: {fileID: 289024107}
   cameraThirdPer: {fileID: 2080648142}
 --- !u!54 &284273223
@@ -4924,7 +4978,6 @@ MonoBehaviour:
   moveSpeed: 13
   rotSpeed: 10
   groundDrag: 3
-  playerGo: {fileID: 522298766}
   jumpKey: 32
   jumpForce: 15
   jumpCooldown: 0.25
@@ -4934,7 +4987,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   orientation: {fileID: 232924549}
-  PlayerAnimator: {fileID: 522298768}
   cameraFirstPer: {fileID: 1365869223}
   cameraThirdPer: {fileID: 1864462805}
 --- !u!54 &539893029
@@ -5645,7 +5697,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64921090dd5492047a20542eb037eaaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1636277822}
   distance: 3
   rot: 0
   rotSpeed: 8
@@ -10914,7 +10965,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64921090dd5492047a20542eb037eaaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 539893026}
   distance: 3
   rot: 0
   rotSpeed: 8
@@ -12080,7 +12130,6 @@ MonoBehaviour:
   moveSpeed: 13
   rotSpeed: 10
   groundDrag: 3
-  playerGo: {fileID: 919132147698061323}
   jumpKey: 32
   jumpForce: 15
   jumpCooldown: 0.25
@@ -12090,7 +12139,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   orientation: {fileID: 268880569}
-  PlayerAnimator: {fileID: 5866666020149842123}
   cameraFirstPer: {fileID: 190710406}
   cameraThirdPer: {fileID: 1515828568}
 --- !u!54 &1527545818
@@ -12813,7 +12861,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64921090dd5492047a20542eb037eaaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1527545815}
   distance: 3
   rot: 0
   rotSpeed: 8
@@ -13256,7 +13303,6 @@ MonoBehaviour:
   moveSpeed: 13
   rotSpeed: 10
   groundDrag: 3
-  playerGo: {fileID: 919132148606950951}
   jumpKey: 32
   jumpForce: 15
   jumpCooldown: 0.25
@@ -13266,7 +13312,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   orientation: {fileID: 654250922}
-  PlayerAnimator: {fileID: 5866666021386346215}
   cameraFirstPer: {fileID: 345282731}
   cameraThirdPer: {fileID: 1831721789}
 --- !u!54 &1636277825
