@@ -5,7 +5,7 @@ using UnityEngine;
  
 public class YMoveCameraThirdPer: MonoBehaviour {
     //private GameObject target;//声明注视目标
-    public GameObject target;
+    private GameObject target;
     public float distance = 3;//摄像机和目标的直线距离
     //横向旋转所需变量
     public float rot = 0;//横向角度
@@ -21,9 +21,11 @@ public class YMoveCameraThirdPer: MonoBehaviour {
     public float scalSpeed = 0.4f;//距离变化速度
     //[ orientation方向] 这个放相机应该面向的方向
     public Transform orientation;
-	void Start () {
-        //target = GameObject.Find("Player");//获得注视目标
+	
+    void Start () {
+        target = GameObject.Find("Player");//获得注视目标
 	}
+    
     void LateUpdate()
     {
         //检查注视目标和摄像机对象是否为空
@@ -57,6 +59,7 @@ public class YMoveCameraThirdPer: MonoBehaviour {
         // {
         //     
         // }
+        print(rot);
     }
     void Roll()
     {
