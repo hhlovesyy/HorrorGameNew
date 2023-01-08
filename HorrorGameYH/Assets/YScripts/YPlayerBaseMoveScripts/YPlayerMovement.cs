@@ -36,7 +36,11 @@ public class YPlayerMovement : MonoBehaviour
     private Animator PlayerAnimator;
     [Header(("camera"))]
     private bool changeCameraFlag = false;
-    
+
+    public float changeCameratimer;
+    private float changeCameratimerTemp;
+    // private bool canChangeCamera;
+
     public GameObject cameraFirstPer;
     public GameObject cameraThirdPer;
     
@@ -52,6 +56,9 @@ public class YPlayerMovement : MonoBehaviour
         //Debug.Log(LayerMask.NameToLayer("WhatIsGround"));
         PlayerAnimator = GetComponentInChildren<Animator>();
         playerGo = PlayerAnimator.gameObject;
+        
+        //camera
+        changeCameratimerTemp = 0f;
     }
     void Update()
     {
@@ -104,12 +111,21 @@ public class YPlayerMovement : MonoBehaviour
             Jump();
             Invoke(nameof(resetJump),jumpCooldown);
         }
-
-        if (Input.GetKey(KeyCode.U))
+        //ÇÐ»»Ïà»ú
+        if (changeCameratimerTemp <= 0)
         {
-            changeCameraFlag = !changeCameraFlag;
-            cameraFirstPer.SetActive(changeCameraFlag);
-            cameraThirdPer.SetActive(!changeCameraFlag);
+            //canChangeCamera = true;
+            if (Input.GetKey(KeyCode.U))
+            {
+                changeCameraFlag = !changeCameraFlag;
+                cameraFirstPer.SetActive(changeCameraFlag);
+                cameraThirdPer.SetActive(!changeCameraFlag);
+                changeCameratimerTemp = changeCameratimer;
+            }
+        }
+        else
+        {
+            changeCameratimerTemp -= Time.deltaTime;
         }
     }
     private void FixedUpdate()
