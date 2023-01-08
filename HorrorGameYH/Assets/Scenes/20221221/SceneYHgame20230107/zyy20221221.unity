@@ -4065,6 +4065,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   orientation: {fileID: 873041104}
+  changeCameratimer: 0.1
   cameraFirstPer: {fileID: 341947454}
   cameraThirdPer: {fileID: 1912207183}
 --- !u!54 &608452605
@@ -45952,6 +45953,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   orientation: {fileID: 7142811081273243377}
+  changeCameratimer: 0
   cameraFirstPer: {fileID: 7876303579631291441}
   cameraThirdPer: {fileID: 2117350766}
 --- !u!54 &7142811082945581929

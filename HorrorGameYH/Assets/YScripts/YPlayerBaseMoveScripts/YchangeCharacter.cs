@@ -34,7 +34,7 @@ public class YchangeCharacter : MonoBehaviour
 
     public void switchTCharacter(int index)
     {
-        if (characterArr[index]&&characterArr[curIndedx])
+        if (index!=curIndedx&& characterArr[index]&&characterArr[curIndedx])
         {
             characterArr[index].SetActive(true);
             characterArr[curIndedx].SetActive(false);
