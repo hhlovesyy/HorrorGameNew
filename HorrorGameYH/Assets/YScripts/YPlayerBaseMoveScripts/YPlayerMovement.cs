@@ -43,7 +43,10 @@ public class YPlayerMovement : MonoBehaviour
 
     public GameObject cameraFirstPer;
     public GameObject cameraThirdPer;
-    
+    // public float MX = 0f;
+    // public float MY = 0f;
+    // public YMoveCameraThirdPer y3d;
+    // public YPlayerCam y1d;
     // Start is called before the first frame update
     void Start()
     {
@@ -59,6 +62,9 @@ public class YPlayerMovement : MonoBehaviour
         
         //camera
         changeCameratimerTemp = 0f;
+
+        // y3d = cameraThirdPer.GetComponentInChildren<YMoveCameraThirdPer>();
+        // y1d = cameraFirstPer.GetComponentInChildren<YPlayerCam>();
     }
     void Update()
     {
@@ -127,6 +133,13 @@ public class YPlayerMovement : MonoBehaviour
         {
             changeCameratimerTemp -= Time.deltaTime;
         }
+
+        // MX = Input.GetAxis("Mouse X");
+        // MY = Input.GetAxis("Mouse Y");
+        // y3d.MX = MX;
+        // y1d.MX = MX;
+        // y3d.MY = MY;
+        // y1d.MY = MY;
     }
     private void FixedUpdate()
     {

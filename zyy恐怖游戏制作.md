@@ -233,6 +233,84 @@ public class YMoveCameraThirdPer: MonoBehaviour {
 
 <img src="zyy恐怖游戏制作.assets/image-20230107205150962.png" alt="image-20230107205150962" style="zoom: 50%;" />
 
+![image-20230108121445488](zyy恐怖游戏制作.assets/image-20230108121445488.png)
+
+![image-20230108121348909](zyy恐怖游戏制作.assets/image-20230108121348909.png)
+
+
+
+##### 相机切换
+
+我们需要注意的是，切换后的相机旋转朝向的位置应该与前一个切换前的相机一致，
+
+此处使用了orientation记录相机朝向，但是通过debug发现，下面会去从 xRotation，yRotation加上运动的鼠标移动，因此， xRotation，yRotation不应该是这个脚本之前的xRotation，yRotation，而应该是改变了朝向的。
+
+
+
+目前采用01/08：但是这是有问题的 因为从四元数转为欧拉角 可能会导致万向锁，所以不应该这么做，但是目前这样行得通，后面可做优化
+
+可见下文 [Quaternion相关 欧拉角相关](# Quaternion相关 欧拉角相关)
+
+两个相机脚本都加上OnEnable()
+
+```c#
+    //每一次setactive true都会再调用一次
+private void OnEnable()
+{
+    transform.rotation = orientation.transform.rotation;
+    var temprot = orientation.transform.rotation.eulerAngles;
+    xRotation = temprot.x;
+    yRotation = temprot.y;
+}
+```
+
+官方切换视角方法
+
+```C#
+using UnityEngine; using System.Collections;  public class ViewpointSwitch : MonoBehaviour {     
+    //从场景中拖入的object     
+    public GameObject Obj_3rd;    
+    public GameObject cam_3rd;    
+    public GameObject gobj_3rd;      
+    public GameObject Obj_1fs;     
+    public GameObject cam_1fs;     
+    public GameObject gobj_1fs;      //记录刚进入第一人称视角时候的欧拉角和离开第一视角时候的欧拉角(Y方向)     
+    float pre1fsAngle = 0;     
+    float cur1fsAngle = 0;  	// Update is called once per frame 	v
+    oid Update ()     {         //切换至第一人称视角         
+        if (Input.GetKey(KeyCode.F1))         {             
+            //记录一开始             
+            //pre1fsAngle = cam_1fs.transform.eulerAngles.y;             
+            pre1fsAngle = cam_3rd.transform.eulerAngles.y;  //记录的第一人称(这里取的是第三人称,其实是一样的)一开始的y方向欧拉角，这里没用上面注释掉的写法是防止重复按f1键切换然后覆盖初始值导致旋转角度差值缩小             
+            if (!Obj_1fs.activeSelf)             
+            {                 
+                Obj_1fs.SetActive(true);                 
+                GameObject.Find("Main Character Controller").transform.localPosition = GameObject.Find("3rd Person Controller").transform.localPosition;                 
+                GameObject.Find("Main Character Controller").transform.localRotation = GameObject.Find("3rd Person Controller").transform.localRotation;                 									Obj_3rd.SetActive(false);             
+            }         
+        }         
+        //切换至第三人称视角         
+        if (Input.GetKey(KeyCode.F2))         
+        {             
+            cur1fsAngle = cam_1fs.transform.eulerAngles.y;  //记录             
+            if (!Obj_3rd.activeSelf)             
+            {                 
+                Obj_3rd.SetActive(true);                 
+                GameObject.Find("3rd Person Controller").transform.localPosition = GameObject.Find("Main Character Controller").transform.localPosition;                 
+                //注意这里Mathf里面的方法是幅度，我这里就进行了一个角度转幅度的计算:幅度=角度*pi/180                 
+                float angle = (cur1fsAngle - pre1fsAngle) * Mathf.PI / 180;                 
+                gobj_3rd.GetComponent<ThirdPersonController>().v = Mathf.Cos(angle);                 
+                gobj_3rd.GetComponent<ThirdPersonController>().h = Mathf.Sin(angle);                 
+                print("旋转角度:" + (cur1fsAngle-pre1fsAngle));                 
+                gobj_3rd.GetComponent<ThirdPersonController>().flag = true;  //这个flag标志是让ThirdPersonController的update方法执行改变上面的v,h一次，然后第二帧的时候就执行v=Input.GetAxisRaw("Vertical")和h=Input.GetAxisRaw("Horizontal")                
+                Obj_1fs.SetActive(false);            
+            }         
+        } 	
+    } } 
+```
+
+https://developer.aliyun.com/article/464819
+
 
 
 ### 人物移动
@@ -692,6 +770,30 @@ Quaternion rotation = Quaternion.Euler(p)
 
 
 
+#### Unity 中的旋转和方向
+
+**https://docs.unity3d.com/cn/2019.4/Manual/QuaternionAndEulerRotationsInUnity.html**
+
+
+
+有时需要在脚本中使用欧拉角。在这种情况下，应注意必须将角度保存在变量中，并仅使用这些变量作为欧拉角*应用*于旋转。虽然可*从*四元数中获取欧拉角，但在获取、修改和重新应用时，可能会出现问题。
+
+下面是一些常犯**错误**的示例：使用假设的示例来尝试围绕 X 轴以每秒 10 度的速度旋转游戏对象。应**避免**此类情况：
+
+```C#
+// 旋转脚本错误 #1
+// 此处的错误在于我们正在修改四元数的 x 值
+// 此值不表示角度，不会产生所需的结果
+    
+void Update () 
+    {
+    var rot = transform.rotation;
+    rot.x += Time.deltaTime * 10;
+    transform.rotation = rot;
+        
+    }
+```
+
 
 
 #### event Action<>
@@ -994,13 +1096,29 @@ https://blog.csdn.net/weixin_41767230/article/details/109356322
 
 看到之后改变灯的颜色 √
 
-跳舞的时候聚光灯跟随
+跳舞的时候聚光灯跟随 √（直接绑到骨骼上）
 
-重构成 主角状态机
+重构成 主角状态机 
 
-宝箱
+宝箱 
 
-切换相机问题
+切换相机问题  √
 
-切换人物
+切换人物 √
+
+切换人物UI 
+
+第一人称第三人称切换的时候相机方向
+
+
+
+
+
+![image-20230108144659267](zyy恐怖游戏制作.assets/image-20230108144659267.png)
+
+
+
+
+
+
 

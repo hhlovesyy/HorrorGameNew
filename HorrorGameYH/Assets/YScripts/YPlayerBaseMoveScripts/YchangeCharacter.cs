@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class YchangeCharacter : MonoBehaviour
 {
-    public int characterIndex;
+    //public int characterIndex;
     private int curIndedx;
     public GameObject[] characterArr;
 
@@ -12,7 +12,6 @@ public class YchangeCharacter : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        characterIndex = 0;
         curIndedx = 0;
         playerMovement = gameObject.GetComponent<YPlayerMovement>();
     }
@@ -22,13 +21,19 @@ public class YchangeCharacter : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
-            characterIndex = 0;
             switchTCharacter(0);
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
-            characterIndex = 1;
             switchTCharacter(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            switchTCharacter(2);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            switchTCharacter(3);
         }
     }
 
