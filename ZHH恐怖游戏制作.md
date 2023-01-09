@@ -108,3 +108,12 @@ public class LightFlickerEffect : MonoBehaviour
 ```
 
 - 下午:把光的Flitch效果和电池电量下降联系到一起,加一个简单的UI,看懂目前项目的代码和Shader
+
+
+
+
+
+- 2023.1.9 todo:
+  - (1)小地图功能:[(23条消息) Unity小地图Minimap制作全面功能介绍篇_紫龙大侠的博客-CSDN博客](https://blog.csdn.net/alayeshi/article/details/115913174)
+  - (2)抽卡系统:[关于抽卡，作为策划我所知道的一切 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/356187524),尝试复现一下,资源需要找一找
+  - (3)打开宝箱触发宝箱消融的shader效果
