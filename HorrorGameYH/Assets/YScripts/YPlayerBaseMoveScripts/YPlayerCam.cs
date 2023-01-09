@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,10 @@ public class YPlayerCam : MonoBehaviour
     float xRotation;
     float yRotation;
 
+    public float MX;
+    public float MY;
+    
+    public GameObject C3D;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,13 +31,27 @@ public class YPlayerCam : MonoBehaviour
         sensX = 400;
         sensY = 400;
     }
+    //每一次setactive true都会再调用一次
+    private void OnEnable()
+    {
+        //后面可以改为使用flag 第一次转换时做四元数的赋值 不转为vector3
+        transform.rotation = orientation.transform.rotation;
+        var temprot = orientation.transform.rotation.eulerAngles;
+        xRotation = temprot.x;
+        yRotation = temprot.y;
+    }
 
     // Update is called once per frame
     void Update()
     {
-        //获取鼠标输入
+        // MX = Input.GetAxisRaw("Mouse X");
+        // MY = Input.GetAxisRaw("Mouse Y");
+        // print(MX.ToString()+"  "+MY.ToString());
+        //获取鼠标输入 Raw..
         float mouseX = Input.GetAxisRaw("Mouse X") * Time.deltaTime * sensX;
         float mouseY = Input.GetAxisRaw("Mouse Y") * Time.deltaTime * sensY;
+        // float mouseX = MX * Time.deltaTime * sensX;
+        // float mouseY = MY * Time.deltaTime * sensY;
 
         //鼠标左右动，相机绕着y轴转
         yRotation += mouseX;
@@ -43,7 +62,7 @@ public class YPlayerCam : MonoBehaviour
 
         //旋转相机
         transform.rotation = Quaternion.Euler(xRotation,yRotation,0);
-        //同时旋转角色
+        //同时旋转orientation
         orientation.transform.rotation = Quaternion.Euler(0,yRotation,0);
         //playerGo.transform.rotation = Quaternion.Euler(xRotation,yRotation,0);
     }
