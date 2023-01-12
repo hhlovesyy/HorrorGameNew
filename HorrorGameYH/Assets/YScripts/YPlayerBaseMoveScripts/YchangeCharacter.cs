@@ -7,7 +7,8 @@ public class YchangeCharacter : MonoBehaviour
     //public int characterIndex;
     private int curIndedx;
     public GameObject[] characterArr;
-
+    public GameObject[] charUIFightHeadArr;
+    public GameObject[] charUIWaitHeadArr;
     public YPlayerMovement playerMovement;
     // Start is called before the first frame update
     void Start()
@@ -16,7 +17,7 @@ public class YchangeCharacter : MonoBehaviour
         playerMovement = gameObject.GetComponent<YPlayerMovement>();
     }
 
-    // Update is called once per frame
+    // Update is called oc··e per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1))
@@ -43,6 +44,17 @@ public class YchangeCharacter : MonoBehaviour
         {
             characterArr[index].SetActive(true);
             characterArr[curIndedx].SetActive(false);
+
+            if (charUIFightHeadArr[index] && charUIWaitHeadArr[curIndedx])
+            {
+                //UI方面 将出战角色的图调整为out(fIGHT)，回去的调整为WAIT
+                charUIFightHeadArr[index].SetActive(true);
+                charUIWaitHeadArr[index].SetActive(false);
+            
+                charUIFightHeadArr[curIndedx].SetActive(false);
+                charUIWaitHeadArr[curIndedx].SetActive(true);
+            }
+            
             curIndedx = index;
             playerMovement.changeCharWhenSwitch();
         }

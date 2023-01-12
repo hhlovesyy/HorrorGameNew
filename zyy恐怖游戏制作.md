@@ -141,11 +141,10 @@ public class YMoveCamera : MonoBehaviour
 [Unity第三人称摄像机的实现之美_51CTO博客_unity第三人称摄像机跟随](https://blog.51cto.com/u_15273495/2914554)
 
 ```C#
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
- 
+
 public class YMoveCameraThirdPer: MonoBehaviour {
     private GameObject target;//声明注视目标
     public float distance = 3;//摄像机和目标的直线距离
@@ -253,6 +252,8 @@ public class YMoveCameraThirdPer: MonoBehaviour {
 
 两个相机脚本都加上OnEnable()
 
+在第三人称->第一人称，我们只需要将第一人称的相机位置调整到第三人称相机面向位置即可
+
 ```c#
     //每一次setactive true都会再调用一次
 private void OnEnable()
@@ -264,7 +265,29 @@ private void OnEnable()
 }
 ```
 
-官方切换视角方法
+第一人称->第三人称
+
+```C#
+    private void OnEnable()
+    {
+        transform.rotation = orientation.transform.rotation;
+        var temprot = orientation.transform.rotation.eulerAngles;
+        roll = 0f ;//默认纵向角度
+        //ROT 是弧度，
+        //temprot.y即orientation.transform.rotation.eulerAngles里的都是角度，
+        //需要进行互转Mathf.PI/ 180
+        //Mathf.PI/2f 通过unity中找两个相机对应关系即rot对应关系和画图
+        rot = (-1)*(temprot.y*Mathf.PI * 1 / 180 +Mathf.PI/2f);
+    }
+```
+
+以下是其笔记，不一定有用
+
+<img src="zyy恐怖游戏制作.assets/DFAFE3E6FDA847E2E248449487679626.png" alt="DFAFE3E6FDA847E2E248449487679626" style="zoom: 50%;" />
+
+
+
+官方的playerController里切换视角方法
 
 ```C#
 using UnityEngine; using System.Collections;  public class ViewpointSwitch : MonoBehaviour {     
@@ -276,8 +299,10 @@ using UnityEngine; using System.Collections;  public class ViewpointSwitch : Mon
     public GameObject cam_1fs;     
     public GameObject gobj_1fs;      //记录刚进入第一人称视角时候的欧拉角和离开第一视角时候的欧拉角(Y方向)     
     float pre1fsAngle = 0;     
-    float cur1fsAngle = 0;  	// Update is called once per frame 	v
-    oid Update ()     {         //切换至第一人称视角         
+    float cur1fsAngle = 0;  	
+    // Update is called once per frame 	v
+    oid Update ()     {         
+        //切换至第一人称视角         
         if (Input.GetKey(KeyCode.F1))         {             
             //记录一开始             
             //pre1fsAngle = cam_1fs.transform.eulerAngles.y;             
@@ -578,17 +603,50 @@ public class YPlayerMovement : MonoBehaviour
 
 
 
+#### 碰撞相关
+
+##### 目前人物碰撞箱
+
+（目前只改了公子和荧妹）
+
+测试后跳过台阶啥的都没问题，第一视角跑步好像还会有真人跑步的感觉
+
+![image-20230110104733948](zyy恐怖游戏制作.assets/image-20230110104733948.png)
+
+
+
+有问题的碰撞箱：
+
+之前是：
+
+当起结束跳跃之后的下蹲动作中，可以看到角色并未真正下蹲，而是因为碰撞箱是一个大胶囊，因此脚会悬空下蹲，如果改为以上的碰撞箱就没问题。![image-20230110111535984](zyy恐怖游戏制作.assets/image-20230110111535984.png)
+
+
+
+在mmd导入blender中 他的刚体：
+
+![img](zyy恐怖游戏制作.assets/SR(LKKFFGQCXON)P3NDBO5S.png)
+
 ## 状态机 敌人AI巡逻追赶
 
-鬼追赶
+根据以下教程
 
-https://www.youtube.com/@davegamedevelopment/videos?view=0&sort=dd&shelf_id=0
-
-https://www.jianshu.com/p/1d75b09b4a37
+**https://www.youtube.com/watch?v=YdERlPfwUb0**
 
 
 
-https://www.youtube.com/watch?v=YdERlPfwUb0
+有限状态机(Finite-state machine,FSM)
+
+[(81条消息) Unity实现有限状态机_萌新求带的博客-CSDN博客_unity ducking](https://blog.csdn.net/qq_17758883/article/details/90553670)
+
+角色状态机同时只能在一个状态，角色不可能同时处于跳跃和站立
+
+状态模式的实现要点，主要有三点：
+
+为状态定义一个接口。
+为每个状态定义一个类。
+恰当地进行状态委托。
+下面将分别进行概述。
 
 
 
@@ -911,7 +969,11 @@ https://developer.aliyun.com/article/239654
 
 
 
+鬼追赶
 
+https://www.youtube.com/@davegamedevelopment/videos?view=0&sort=dd&shelf_id=0
+
+https://www.jianshu.com/p/1d75b09b4a37
 
 ### navMes寻路
 
@@ -957,11 +1019,13 @@ https://youtu.be/atCOd4o7tG4
 
 
 
+### 主角状态机
+
+https://github.com/AiFuYou/UnityDemo/blob/master/Assets/Demo_FSM/Scripts/GamePlay.cs
 
 
 
-
-## 屏幕效果相关
+## 屏幕效果与UI相关
 
 下面两个效果都放在manager中
 
@@ -1078,6 +1142,222 @@ public class YUIManager : MonoBehaviour
 
 
 
+#### 切换人物UI 
+
+切换人物及其UI：
+
+```C#
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class YchangeCharacter : MonoBehaviour
+{
+    //public int characterIndex;
+    private int curIndedx;
+    public GameObject[] characterArr;
+    public GameObject[] charUIFightHeadArr;
+    public GameObject[] charUIWaitHeadArr;
+    public YPlayerMovement playerMovement;
+    // Start is called before the first frame update
+    void Start()
+    {
+        curIndedx = 0;
+        playerMovement = gameObject.GetComponent<YPlayerMovement>();
+    }
+
+    // Update is called oc··e per frame
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            switchTCharacter(0);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha2))
+        {
+            switchTCharacter(1);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha3))
+        {
+            switchTCharacter(2);
+        }
+        else if (Input.GetKeyDown(KeyCode.Alpha4))
+        {
+            switchTCharacter(3);
+        }
+    }
+
+    public void switchTCharacter(int index)
+    {
+        if (index!=curIndedx&& characterArr[index]&&characterArr[curIndedx])
+        {
+            characterArr[index].SetActive(true);
+            characterArr[curIndedx].SetActive(false);
+
+            if (charUIFightHeadArr[index] && charUIWaitHeadArr[curIndedx])
+            {
+                //UI方面 将出战角色的图调整为out(fIGHT)，回去的调整为WAIT
+                charUIFightHeadArr[index].SetActive(true);
+                charUIWaitHeadArr[index].SetActive(false);
+            
+                charUIFightHeadArr[curIndedx].SetActive(false);
+                charUIWaitHeadArr[curIndedx].SetActive(true);
+            }
+            
+            curIndedx = index;
+            playerMovement.changeCharWhenSwitch();
+        }
+    }
+}
+
+```
+
+<img src="zyy恐怖游戏制作.assets/image-20230111004817292.png" alt="image-20230111004817292" style="zoom:67%;" />
+
+
+
+#### 对话系统
+
+【【对话系统】文字滚动效果的单人叙述对话与双人互动对话（附：富文本，StartWith，Replace和部分的UI交互）】 https://www.bilibili.com/video/BV1oV411r7Ts/?share_source=copy_web&vd_source=067de257d5f13e60e5b36da1a0ec151e
+
+###### UI和屏幕一起缩放
+
+为了让画布上的元素会随着画布放大而放大，我们的canvas选择如下选项：
+
+![image-20230111133301185](zyy恐怖游戏制作.assets/image-20230111133301185.png)
+
+
+
+233
+
+184
+
+33+16=50
+
+###### 填充
+
+在panel下新建image
+
+<img src="zyy恐怖游戏制作.assets/image-20230111133624332.png" alt="image-20230111133624332" style="zoom:50%;" />
+
+![image-20230111133829235](zyy恐怖游戏制作.assets/image-20230111133829235.png)
+
+
+
+最终：
+
+![image-20230111135354408](zyy恐怖游戏制作.assets/image-20230111135354408.png)
+
+
+
+文字方面也可用富文本控制
+
+![image-20230111140011657](zyy恐怖游戏制作.assets/image-20230111140011657.png)
+
+
+
+让文字不会显示为默认的一行
+
+![image-20230111140242751](zyy恐怖游戏制作.assets/image-20230111140242751.png)
+
+
+
+##### 进入trigger碰撞箱
+
+```c#
+private void OnTriggerEnter(Collider other)
+{
+    if (other.CompareTag("Player"))
+    {
+        isEnter = true;
+    }
+}
+```
+
+OnTriggerEnter 必须保证 我们碰撞的这个collider下 就带有"Player"tag，因此 要找到荧妹的这个最后带有collider的这个gameobject 设为"Player"tag。
+
+![image-20230111155438498](zyy恐怖游戏制作.assets/image-20230111155438498.png)
+
+
+
+关于DialogManager  只要他还会被调用 就不应该被隐藏 隐藏后 awake等都不会调用
+
+![image-20230111161436824](zyy恐怖游戏制作.assets/image-20230111161436824.png)
+
+
+
+
+
+记录一些对话
+
+
+
+```markdown
+n-达达利亚
+
+又见面了伙伴！
+
+n-荧
+
+......！
+
+n-达达利亚
+
+你干嘛哎呦，我真的没有原胚了o(╥﹏╥)o。真的，去年不是给你了嘛
+
+-荧
+
+......？？
+
+n-达达利亚
+
+你今天没带神之嘴吗
+
+n-荧
+
+......。[○･｀Д´･ ○]
+```
+
+
+
+```JSON
+n-达达利亚
+
+又见面了伙伴！
+
+n-荧
+
+......！
+
+n-达达利亚
+
+你干嘛哎呦，我真的没有原胚了o(╥﹏╥)o。真的，去年不是给你了嘛
+
+-荧
+
+......？？
+
+n-达达利亚
+
+你今天没带神之嘴吗
+
+n-荧
+
+......。[○･｀Д´･ ○]
+
+凯瑟琳
+```
+
+##### StartWith与Replace
+
+单向对话：第一个写上n-名字
+
+![image-20230111213014682](zyy恐怖游戏制作.assets/image-20230111213014682.png)
+
+
+
+![image-20230111224112076](zyy恐怖游戏制作.assets/image-20230111224112076.png)
+
 ## 动画相关
 
 #### Unity Animator 切换动作时物体的位置发生变化
@@ -1092,13 +1372,31 @@ https://blog.csdn.net/weixin_41767230/article/details/109356322
 
 ![image-20230107124750571](zyy恐怖游戏制作.assets/image-20230107124750571.png)
 
+
+
+**已经有的功能点：**
+
+切换人物
+
+第一人称转第三人称视角
+
+敌人状态机
+
+
+
+## 一些图片与其来源记录
+
+https://www.youtube.com/watch?v=FRIyjs102-c
+
+<img src="zyy恐怖游戏制作.assets/image-20230111143209214.png" alt="image-20230111143209214" style="zoom:50%;" />
+
 ## 想继续加的
 
 看到之后改变灯的颜色 √
 
 跳舞的时候聚光灯跟随 √（直接绑到骨骼上）
 
-重构成 主角状态机 
+重构成 主角状态机  
 
 宝箱 
 
@@ -1106,19 +1404,20 @@ https://blog.csdn.net/weixin_41767230/article/details/109356322
 
 切换人物 √
 
-切换人物UI 
+切换人物UI √
 
-第一人称第三人称切换的时候相机方向
+第一人称第三人称切换的时候相机方向  √（x轴旋转的还没有 但是感觉不用弄这个功能）
 
+对话系统 NPC
 
+让相机不会卡进墙里面
 
+游泳
 
+下蹲
+
+更多怪
+
+篮球入框/踢到  触发唱跳  加音乐
 
 ![image-20230108144659267](zyy恐怖游戏制作.assets/image-20230108144659267.png)
-
-
-
-
-
-
-

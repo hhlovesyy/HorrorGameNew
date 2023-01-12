@@ -5,7 +5,7 @@ using UnityEngine;
  
 public class YMoveCameraThirdPer: MonoBehaviour {
     //private GameObject target;//声明注视目标
-    private GameObject target;
+    public GameObject target;
     public float distance = 3;//摄像机和目标的直线距离
     //横向旋转所需变量
     public float rot = 0;//横向角度
@@ -21,34 +21,16 @@ public class YMoveCameraThirdPer: MonoBehaviour {
     public float scalSpeed = 0.4f;//距离变化速度
     //[ orientation方向] 这个放相机应该面向的方向
     public Transform orientation;
-
-    public bool changeFlag = false;
-    // public float MX;
-    // public float MY;
-    void Start () {
-        target = GameObject.Find("Player");//获得注视目标
-	}
+    
+ //    void Start () {
+ //        target = GameObject.Find("Player");//获得注视目标
+	// }
     private void OnEnable()
     {
         transform.rotation = orientation.transform.rotation;
         var temprot = orientation.transform.rotation.eulerAngles;
-        // roll = temprot.x;
-        // rot = temprot.y;
-        roll = temprot.x;
-        rot = temprot.y;
-        
-        // Vector3 targetPos = target.transform.position;//获得目标坐标
-        // Vector3 cameraPos;//声明摄像机坐标
-        // float dx = distance * Mathf.Cos(roll);//获得摄像机和目标的水平距离
-        // float height = distance * Mathf.Sin(roll);//获得摄像机和目标的竖直距离
-        //
-        // (cameraPos.x - targetPos.x)/distance = Mathf.Cos(roll) * Mathf.Cos(rot);
-        // (cameraPos.z - targetPos.z)/ distance = Mathf.Cos(roll) * Mathf.Sin(rot);//获得水平移动后的z坐标
-        // (cameraPos.y - targetPos.y)/ distance = Mathf.Sin(roll);//获得相机y坐标
-        //
-        // cameraPos.x = targetPos.x + distance * Mathf.Cos(roll) * Mathf.Cos(rot);//获得水平移动后的x坐标
-        // cameraPos.z = targetPos.z + distance * Mathf.Cos(roll) * Mathf.Sin(rot);//获得水平移动后的z坐标
-        // cameraPos.y = targetPos.y + distance * Mathf.Sin(roll);//获得相机y坐标
+        roll = 0f ;//默认纵向角度
+        rot = (-1)*(temprot.y*Mathf.PI * 1 / 180 +Mathf.PI/2f);
     }
     void LateUpdate()
     {
@@ -57,11 +39,7 @@ public class YMoveCameraThirdPer: MonoBehaviour {
             return;
         if (Camera.main == null)
             return;
-        // if (changeFlag)
-        // {
-        //     changeFlag = false;
-        //     return;
-        // }
+
         //执行横向旋转、纵向旋转和缩放视角方法
         Rotate();
         Roll();
@@ -75,26 +53,18 @@ public class YMoveCameraThirdPer: MonoBehaviour {
         cameraPos.y = targetPos.y + height;//获得相机y坐标
         Camera.main.transform.position = cameraPos;//确定摄像机坐标
         Camera.main.transform.LookAt(target.transform);//注视目标
-
-        //orientation.transform.rotation = Quaternion.Euler(0,rot,0);
+        
         orientation.transform.forward = Camera.main.transform.forward;
         orientation.transform.right = Camera.main.transform.right;
     }
     void Rotate()
     {
         float angleChange = Input.GetAxis("Mouse X") * rotSpeed * Time.deltaTime;//鼠标在X轴上移动的距离乘以旋转系数得到的旋转角度
-        //float angleChange = MX* rotSpeed * Time.deltaTime;//鼠标在X轴上移动的距离乘以旋转系数得到的旋转角度
         rot -= angleChange;//更新横向角度
-        // if (Input.GetMouseButton(1)) //点击右键
-        // {
-        //     
-        // }
-        //print(rot);
     }
     void Roll()
     {
         float angleChange = Input.GetAxis("Mouse Y") * rollSpeed * 0.5f * Time.deltaTime;//鼠标在Y轴上移动的距离乘以旋转系数得到的旋转角度
-        //float angleChange = MY * rollSpeed * 0.5f * Time.deltaTime;//鼠标在Y轴上移动的距离乘以旋转系数得到的旋转角度
         roll -= angleChange;//更新纵向角度
         if (roll > maxRoll)//纵向旋转的最大限制
             roll = maxRoll;
