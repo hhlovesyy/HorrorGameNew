@@ -10,7 +10,8 @@ public class YPlayerMovement : MonoBehaviour
 
     public float rotSpeed;
     public float groundDrag;
-    private GameObject playerGo; 
+    private GameObject playerGo;
+    public bool canMove = true;
 
     [Header("Keybinds")]
     public KeyCode jumpKey = KeyCode.Space;
@@ -33,7 +34,11 @@ public class YPlayerMovement : MonoBehaviour
     public Transform orientation;
     Vector3 moveDiretion;
     
+    [Header("Anim")]
     private Animator PlayerAnimator;
+
+    //private int animStateCache;
+    
     [Header(("camera"))]
     private bool changeCameraFlag = false;
 
@@ -68,6 +73,12 @@ public class YPlayerMovement : MonoBehaviour
     }
     void Update()
     {
+        if (!canMove)
+        {
+            rb.velocity=Vector3.zero;
+            PlayerAnimator.SetInteger("AnimState",0);
+            return;
+        }
         grounded = Physics.Raycast(transform.position,Vector3.down,playerHeight*0.5f+0.2f,whatIsGround);
         myInput();
         SpeedControl();
@@ -88,31 +99,37 @@ public class YPlayerMovement : MonoBehaviour
         horizontalInput = Input.GetAxisRaw("Horizontal");
         verticalInput = Input.GetAxisRaw("Vertical");
 
-        if (Mathf.Abs(horizontalInput)>0.01f ||Mathf.Abs( verticalInput)>0.01f)
+        if (readyToJump)
         {
-            PlayerAnimator.SetInteger("AnimState",1);
+            if (Mathf.Abs(horizontalInput)>0.01f ||Mathf.Abs( verticalInput)>0.01f)
+            {
+                PlayerAnimator.SetInteger("AnimState",1);
             
-            moveDiretion = orientation.forward * verticalInput + orientation.right * horizontalInput;
+                moveDiretion = orientation.forward * verticalInput + orientation.right * horizontalInput;
 
-            //使主角要移动时，面向要旋转的方向，且必须避免镜头看天空或者地面时，角色也跟着转动
-            //[物体移动时，面朝移动方向旋转_CXW30的博客-CSDN博客_移动方向的前方怎么表述](https://blog.csdn.net/qq_32605447/article/details/90693227)
-            //[Unity Vector3与Quaternion相互转换_Parkergh的博客-CSDN博客_quaternion转vector3](https://blog.csdn.net/m0_37763682/article/details/107461513)
-            Quaternion lookRot = Quaternion.LookRotation(moveDiretion);    //dir为前方节点的pos
-            Vector3 lookR = lookRot.eulerAngles;
-            //也就是说 角色只能绕着y轴转动
-            lookR = new Vector3(0f,lookR.y,0f);
-            lookRot = Quaternion.Euler(lookR);
+                //使主角要移动时，面向要旋转的方向，且必须避免镜头看天空或者地面时，角色也跟着转动
+                //[物体移动时，面朝移动方向旋转_CXW30的博客-CSDN博客_移动方向的前方怎么表述](https://blog.csdn.net/qq_32605447/article/details/90693227)
+                //[Unity Vector3与Quaternion相互转换_Parkergh的博客-CSDN博客_quaternion转vector3](https://blog.csdn.net/m0_37763682/article/details/107461513)
+                Quaternion lookRot = Quaternion.LookRotation(moveDiretion);    //dir为前方节点的pos
+                Vector3 lookR = lookRot.eulerAngles;
+                //也就是说 角色只能绕着y轴转动
+                lookR = new Vector3(0f,lookR.y,0f);
+                lookRot = Quaternion.Euler(lookR);
 
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Mathf.Clamp01(rotSpeed * Time.deltaTime));
-        }
-        else
-        {
-            PlayerAnimator.SetInteger("AnimState",0);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRot, Mathf.Clamp01(rotSpeed * Time.deltaTime));
+            }
+            else
+            {
+                PlayerAnimator.SetInteger("AnimState",0);
+            }
         }
 
         //什么时候跳
         if(Input.GetKey(jumpKey)&&readyToJump&&grounded)
         {
+            //animStateCache = PlayerAnimator.GetInteger("AnimState");
+            print("jump");
+            PlayerAnimator.SetInteger("AnimState",2);
             readyToJump = false;
             Jump();
             Invoke(nameof(resetJump),jumpCooldown);
@@ -120,7 +137,6 @@ public class YPlayerMovement : MonoBehaviour
         //切换相机
         if (changeCameratimerTemp <= 0)
         {
-            //canChangeCamera = true;
             if (Input.GetKey(KeyCode.U))
             {
                 changeCameraFlag = !changeCameraFlag;
@@ -133,13 +149,7 @@ public class YPlayerMovement : MonoBehaviour
         {
             changeCameratimerTemp -= Time.deltaTime;
         }
-
-        // MX = Input.GetAxis("Mouse X");
-        // MY = Input.GetAxis("Mouse Y");
-        // y3d.MX = MX;
-        // y1d.MX = MX;
-        // y3d.MY = MY;
-        // y1d.MY = MY;
+        
     }
     private void FixedUpdate()
     {
@@ -168,13 +178,14 @@ public class YPlayerMovement : MonoBehaviour
     public void Jump()
     {
         //重置y轴 这样每次才能跳一样高 !!!
-        rb.velocity = new Vector3(rb.velocity.x,0f,rb.velocity.z);
+        //rb.velocity = new Vector3(rb.velocity.x,0f,rb.velocity.z);
 
-        rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
+        //rb.AddForce(transform.up * jumpForce, ForceMode.Impulse);
     }
     public void resetJump()
     {
         readyToJump = true;
+        //PlayerAnimator.SetInteger("AnimState",animStateCache);
     }
 
     public void changeCharWhenSwitch()
