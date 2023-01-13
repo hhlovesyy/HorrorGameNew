@@ -12,6 +12,8 @@ public class YTalk : MonoBehaviour
     public string name;
     public bool isAsset;
     public TextAsset dialogTextAsset;
+
+    public Transform lookAtTrans;
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -36,6 +38,9 @@ public class YTalk : MonoBehaviour
         if (isEnter && Input.GetKeyDown(KeyCode.F)&& YDialogManager.instance.dialogBox.activeInHierarchy==false)
         {
             YDialogManager.instance.showTalkEnter.SetActive(false);
+            YCameraManager.instance.changeDialogCamera(lookAtTrans,true);
+            //YDialogManager.instance.changeDialogCamera(lookAtTrans);
+            //camera 移动
             if (!isAsset)
             {
                 YDialogManager.instance.showDialog(lines);
@@ -45,10 +50,7 @@ public class YTalk : MonoBehaviour
             {
                 YDialogManager.instance.readText(dialogTextAsset);
                 YDialogManager.instance.isTextAsset = true;
-                YDialogManager.instance.getMsgFromTextAsset();
             }
-            // YDialogManager.instance.playerGo.GetComponent<YPlayerMovement>()
-            //     .canMove = false;
         }
     }
 }

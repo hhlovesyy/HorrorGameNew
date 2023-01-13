@@ -21,10 +21,12 @@ public class YMoveCameraThirdPer: MonoBehaviour {
     public float scalSpeed = 0.4f;//距离变化速度
     //[ orientation方向] 这个放相机应该面向的方向
     public Transform orientation;
+    public GameObject Camera3D;
     
- //    void Start () {
- //        target = GameObject.Find("Player");//获得注视目标
-	// }
+    void Start ()
+    {
+        Camera3D = gameObject;
+    }
     private void OnEnable()
     {
         transform.rotation = orientation.transform.rotation;
@@ -37,7 +39,9 @@ public class YMoveCameraThirdPer: MonoBehaviour {
         //检查注视目标和摄像机对象是否为空
         if (target == null)
             return;
-        if (Camera.main == null)
+        // if (Camera.main == null)
+        //     return;
+        if (gameObject == null)
             return;
 
         //执行横向旋转、纵向旋转和缩放视角方法
@@ -51,11 +55,15 @@ public class YMoveCameraThirdPer: MonoBehaviour {
         cameraPos.x = targetPos.x + dx * Mathf.Cos(rot);//获得水平移动后的x坐标
         cameraPos.z = targetPos.z + dx * Mathf.Sin(rot);//获得水平移动后的z坐标
         cameraPos.y = targetPos.y + height;//获得相机y坐标
-        Camera.main.transform.position = cameraPos;//确定摄像机坐标
-        Camera.main.transform.LookAt(target.transform);//注视目标
+        // Camera.main.transform.position = cameraPos;//确定摄像机坐标
+        // Camera.main.transform.LookAt(target.transform);//注视目标
+        gameObject.transform.position = cameraPos;//确定摄像机坐标
+        gameObject.transform.LookAt(target.transform);//注视目标
         
-        orientation.transform.forward = Camera.main.transform.forward;
-        orientation.transform.right = Camera.main.transform.right;
+        // orientation.transform.forward = Camera.main.transform.forward;
+        // orientation.transform.right = Camera.main.transform.right;
+        orientation.transform.forward = gameObject.transform.forward;
+        orientation.transform.right = gameObject.transform.right;
     }
     void Rotate()
     {

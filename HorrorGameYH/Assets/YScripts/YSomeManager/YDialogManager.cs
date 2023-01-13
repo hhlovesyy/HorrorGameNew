@@ -41,6 +41,9 @@ public class YDialogManager : MonoBehaviour
     public Transform btnGroup;
 
     public bool cursorOut;
+
+    //public Camera DialogCamera;
+    
     //public string tempName;
     private void Awake()
     {
@@ -61,6 +64,7 @@ public class YDialogManager : MonoBehaviour
     void Start()
     {
         //dialogText.text = dialogLines[curIndex];
+        
         
     }
 
@@ -110,6 +114,9 @@ public class YDialogManager : MonoBehaviour
             playerGo.GetComponent<YPlayerMovement>()
                 .canMove = true;
             //FindObjectOfType<YPlayerMovement>().canMove = true;
+            
+            // YCameraManager.instance.DialogCamera.gameObject.SetActive(false);
+            YCameraManager.instance.changeDialogCamera(null,false);
         }
     }
     public void showDialog(string[] lines)
@@ -180,8 +187,11 @@ public class YDialogManager : MonoBehaviour
 
     public void readText(TextAsset dialogTextAsset)
     {
+        playerGo.GetComponent<YPlayerMovement>()
+            .canMove = true;
         //每行被“换行”分开       
         rows = dialogTextAsset.text.Split('\n');
+        getMsgFromTextAsset();
     }
 
     public void getMsgFromTextAsset()
@@ -210,6 +220,9 @@ public class YDialogManager : MonoBehaviour
                 playerGo.GetComponent<YPlayerMovement>()
                     .canMove = true;
                 dialogAssetIndex = 0;
+                
+                // YCameraManager.instance.DialogCamera.gameObject.SetActive(false);
+                YCameraManager.instance.changeDialogCamera(null,false);
             }
         }
     }
@@ -246,4 +259,11 @@ public class YDialogManager : MonoBehaviour
             Destroy(btnGroup.GetChild(i).gameObject);
         }
     }
+
+    // public void changeDialogCamera(Transform target)
+    // {
+    //     DialogCamera.gameObject.SetActive(true);
+    //     DialogCamera.transform.position = target.position + target.forward * 0.9f;
+    //     DialogCamera.transform.LookAt(target);
+    // }
 }

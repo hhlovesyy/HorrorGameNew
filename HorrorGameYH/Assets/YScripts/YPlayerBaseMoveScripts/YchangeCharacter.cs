@@ -20,6 +20,11 @@ public class YchangeCharacter : MonoBehaviour
     // Update is called oc··e per frame
     void Update()
     {
+        if (YCameraManager.instance.isDialog)
+        {
+            Debug.Log("当前正在对话 无法切换角色");
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.Alpha1))
         {
             switchTCharacter(0);
