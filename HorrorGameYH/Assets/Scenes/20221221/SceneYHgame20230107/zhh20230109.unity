@@ -4442,6 +4442,7 @@ MonoBehaviour:
   moveSpeed: 13
   rotSpeed: 10
   groundDrag: 3
+  canMove: 1
   jumpKey: 32
   jumpForce: 15
   jumpCooldown: 0.25
@@ -4517,6 +4518,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 87e67925c8996fb42bb8ca821da954e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveSpeed: 0
+  rotSpeed: 0
+  groundDrag: 0
+  changeCameratimer: 0
+  cameraFirstPer: {fileID: 0}
+  cameraThirdPer: {fileID: 0}
+  rb: {fileID: 0}
 --- !u!114 &608452609
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4534,6 +4542,8 @@ MonoBehaviour:
   - {fileID: 6946862480311392043}
   - {fileID: 342329431}
   - {fileID: 5124722994465044624}
+  charUIFightHeadArr: []
+  charUIWaitHeadArr: []
   playerMovement: {fileID: 0}
 --- !u!1 &608841994
 GameObject:
@@ -6023,6 +6033,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64921090dd5492047a20542eb037eaaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
   distance: 3
   rot: 0
   rotSpeed: 8
@@ -6031,7 +6042,6 @@ MonoBehaviour:
   minDistance: 1
   scalSpeed: 0.4
   orientation: {fileID: 873041104}
-  changeFlag: 0
 --- !u!114 &858805434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7583,6 +7593,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64921090dd5492047a20542eb037eaaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  target: {fileID: 0}
   distance: 3
   rot: 0
   rotSpeed: 8
@@ -7591,7 +7602,6 @@ MonoBehaviour:
   minDistance: 1
   scalSpeed: 0.4
   orientation: {fileID: 7142811081273243377}
-  changeFlag: 0
 --- !u!20 &1008217905
 Camera:
   m_ObjectHideFlags: 0
@@ -12816,9 +12826,6 @@ MonoBehaviour:
   sensX: 400
   sensY: 400
   orientation: {fileID: 873041104}
-  MX: 0
-  MY: 0
-  C3D: {fileID: 0}
 --- !u!20 &1693062738
 Camera:
   m_ObjectHideFlags: 0
@@ -18300,7 +18307,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!195 &490120575734569278
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -54562,6 +54569,7 @@ MonoBehaviour:
   moveSpeed: 13
   rotSpeed: 10
   groundDrag: 3
+  canMove: 1
   jumpKey: 32
   jumpForce: 15
   jumpCooldown: 0.25
@@ -58275,9 +58283,6 @@ MonoBehaviour:
   sensX: 400
   sensY: 400
   orientation: {fileID: 7142811081273243377}
-  MX: 0
-  MY: 0
-  C3D: {fileID: 0}
 --- !u!4 &7876303579810144799
 Transform:
   m_ObjectHideFlags: 0

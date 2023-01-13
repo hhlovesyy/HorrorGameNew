@@ -154,6 +154,9 @@ public class LightFlickerEffect : MonoBehaviour
 
 ### 2.迷宫生成功能
 
-#### (1)Kruskal算法生成迷宫
+#### (1)Prim&Kruskal算法生成迷宫
 
-参考链接:[Buckblog: Maze Generation: Kruskal's Algorithm (jamisbuck.org)](http://weblog.jamisbuck.org/2011/1/3/maze-generation-kruskal-s-algorithm)
+最终参考的教程和对应的代码:[随机迷宫生成算法整理分析 | indienova 独立游戏](https://indienova.com/u/cocolate/blogread/1493)
+
+参考链接:[Buckblog: Maze Generation: Prim's Algorithm (jamisbuck.org)](http://weblog.jamisbuck.org/2011/1/10/maze-generation-prim-s-algorithm)
+
