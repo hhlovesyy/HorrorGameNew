@@ -45,6 +45,8 @@ public class HMazeGeneration : MonoBehaviour
     public Transform startPos;
     public Transform gazeParent;
 
+    public float blockWidth = 5f;
+
 
     void Start()
     {
@@ -469,6 +471,33 @@ public class HMazeGeneration : MonoBehaviour
     {
         if (map != null)
         {
+            //生成迷宫的外框
+            for (int i = 0; i < width * 2-1; i++)
+            {
+                GameObject wallOrRoad =
+                    GameObject.Instantiate(wallOrRoadPrefab, 
+                        startPos.position + new Vector3(-width / 2.0f - blockWidth + 0.5f,  0, -height / 2.0f +i*blockWidth + 0.5f),
+                        quaternion.identity,gazeParent);
+                
+                GameObject wallOrRoad2 =
+                    GameObject.Instantiate(wallOrRoadPrefab, 
+                        startPos.position + new Vector3(-width / 2.0f + blockWidth*(width*2-1) + 0.5f,  0, -height / 2.0f +i*blockWidth + 0.5f),
+                        quaternion.identity,gazeParent);
+            }
+
+            for (int i = 0; i < height * 2-1; i++)
+            {
+                GameObject wallOrRoad =
+                    GameObject.Instantiate(wallOrRoadPrefab, 
+                        startPos.position + new Vector3(-width / 2.0f + blockWidth*i + 0.5f,  0, -height / 2.0f  + 0.5f-blockWidth),
+                        quaternion.identity,gazeParent);
+                
+                GameObject wallOrRoad2 =
+                    GameObject.Instantiate(wallOrRoadPrefab, 
+                        startPos.position + new Vector3(-width / 2.0f + blockWidth*i + 0.5f,  0, -height / 2.0f +blockWidth*(height*2-1) + 0.5f),
+                        quaternion.identity,gazeParent);
+            }
+            
             for (int x = 0; x < width*2-1; x++)
             {
                 for (int y = 0; y < height*2-1; y++)
@@ -484,7 +513,7 @@ public class HMazeGeneration : MonoBehaviour
                         // wallsAndPaths[x,y].gameObject.SetActive(false);
                         GameObject wallOrRoad =
                              GameObject.Instantiate(wallOrRoadPrefab, 
-                                 startPos.position + new Vector3(-width / 2 + x*3 + 0.5f,  0, -height / 2 + y*3 + 0.5f),
+                                 startPos.position + new Vector3(-width / 2.0f + x*blockWidth + 0.5f,  0, -height / 2.0f + y*blockWidth + 0.5f),
                                  quaternion.identity,gazeParent);
                     }
                 }
