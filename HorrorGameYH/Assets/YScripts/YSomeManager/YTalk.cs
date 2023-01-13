@@ -10,6 +10,8 @@ public class YTalk : MonoBehaviour
     public string[] lines;
 
     public string name;
+    public bool isAsset;
+    public TextAsset dialogTextAsset;
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
@@ -28,19 +30,23 @@ public class YTalk : MonoBehaviour
             isEnter = false;
         }
     }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
     void Update()
     {
         if (isEnter && Input.GetKeyDown(KeyCode.F)&& YDialogManager.instance.dialogBox.activeInHierarchy==false)
         {
             YDialogManager.instance.showTalkEnter.SetActive(false);
-            YDialogManager.instance.showDialog(lines);
+            if (!isAsset)
+            {
+                YDialogManager.instance.showDialog(lines);
+                YDialogManager.instance.isTextAsset = false;
+            }
+            else
+            {
+                YDialogManager.instance.readText(dialogTextAsset);
+                YDialogManager.instance.isTextAsset = true;
+                YDialogManager.instance.getMsgFromTextAsset();
+            }
             // YDialogManager.instance.playerGo.GetComponent<YPlayerMovement>()
             //     .canMove = false;
         }

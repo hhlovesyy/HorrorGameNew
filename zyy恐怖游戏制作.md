@@ -1358,6 +1358,257 @@ n-荧
 
 ![image-20230111224112076](zyy恐怖游戏制作.assets/image-20230111224112076.png)
 
+
+
+YTalks.cs 挂在需要触发对话的物体上面 物体上需要有collider组件（勾选trigger）
+
+```C#
+
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class YTalk : MonoBehaviour
+{
+    [SerializeField]private bool isEnter;
+    [TextArea(1, 3)] 
+    public string[] lines;
+
+    public string name;
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            isEnter = true;
+            YDialogManager.instance.showName(name);
+            YDialogManager.instance.showTalkEnter.SetActive(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            YDialogManager.instance.showTalkEnter.SetActive(false);
+            isEnter = false;
+        }
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (isEnter && Input.GetKeyDown(KeyCode.F)&& YDialogManager.instance.dialogBox.activeInHierarchy==false)
+        {
+            YDialogManager.instance.showTalkEnter.SetActive(false);
+            YDialogManager.instance.showDialog(lines);
+            // YDialogManager.instance.playerGo.GetComponent<YPlayerMovement>()
+            //     .canMove = false;
+        }
+    }
+}
+
+```
+
+
+
+ YDialogManager.cs
+
+```C#
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class YDialogManager : MonoBehaviour
+{
+    //单例模式
+    public static YDialogManager instance;
+    
+    public GameObject dialogBox;
+
+    public Text dialogText, nameText,showNameEnterText;
+    [TextArea(1,3)] //为了在面板中可以显示为3行 不然一行可能装不下
+    public string[] dialogLines;
+    [SerializeField]private int curIndex;
+    public GameObject playerGo;
+    public bool isScrolling;
+    [SerializeField]private float texSpeed;
+
+    public float placeTextStep;
+    public float originx;
+    public GameObject showTalkEnter;
+    //public string tempName;
+    private void Awake()
+    {
+        if (instance == null) 
+        {
+            instance = this;
+        }
+        else
+        {
+            if (instance != this)
+            {
+                Destroy(gameObject);
+            }
+        }
+        DontDestroyOnLoad(gameObject);
+    }
+
+    void Start()
+    {
+        dialogText.text = dialogLines[curIndex];
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        if (showTalkEnter.activeInHierarchy)
+        {
+            //showNameEnterText.text = tempName;
+            
+        }
+        //如果他此时是激活状态
+        if (dialogBox.activeInHierarchy)
+        {
+            if (Input.GetMouseButtonUp(0))
+            {
+                if (isScrolling == false)
+                {
+                    curIndex++;
+                    if (curIndex < dialogLines.Length)
+                    {
+                        checkName();
+                        //dialogText.text = dialogLines[curIndex];
+                        float xtemp = originx - dialogLines[curIndex].Length * placeTextStep;
+                        dialogText.transform.localPosition = new Vector3(xtemp,dialogText.transform.localPosition.y,dialogText.transform.localPosition.z);
+                        StartCoroutine(ScrollingText());
+                    }
+                    else
+                    {
+                        dialogBox.SetActive(false);
+                        playerGo.GetComponent<YPlayerMovement>()
+                            .canMove = true;
+                        //FindObjectOfType<YPlayerMovement>().canMove = true;
+                    }
+                }
+            }
+        }
+    }
+
+    public void showDialog(string[] lines)
+    {
+        dialogLines = lines;
+        curIndex = 0;
+        checkName();
+        
+        float xtemp = originx - dialogLines[curIndex].Length * placeTextStep;
+        dialogText.transform.localPosition = new Vector3(xtemp,dialogText.transform.localPosition.y,dialogText.transform.localPosition.z);
+        
+        //dialogText.text = dialogLines[curIndex];//一行一行读进来
+        StartCoroutine(ScrollingText());
+        dialogBox.SetActive(true);
+        
+        //FindObjectOfType<YPlayerMovement>().canMove = false;
+        playerGo.GetComponent<YPlayerMovement>()
+            .canMove = false;
+    }
+
+    private void checkName()
+    {
+        //如果以n-开头
+        if (dialogLines[curIndex].StartsWith("n-"))
+        {
+            nameText.text = dialogLines[curIndex].Replace("n-","");
+            curIndex++;
+        }
+        
+    }
+
+    private IEnumerator ScrollingText()
+    {
+        isScrolling = true;
+        dialogText.text = "";
+
+        foreach (char letter in dialogLines[curIndex].ToCharArray())
+        {
+            dialogText.text += letter;
+            yield return new WaitForSeconds(texSpeed);
+        }
+
+        isScrolling = false;
+    }
+
+    public void showName(string name)
+    {
+        showNameEnterText.text = name;
+    }
+}
+
+```
+
+
+
+##### 选话
+
+【【Unity教程】剧情对话系统】 https://www.bilibili.com/video/BV1v5411D79x/?share_source=copy_web&vd_source=067de257d5f13e60e5b36da1a0ec151e
+
+![image-20230112174859862](zyy恐怖游戏制作.assets/image-20230112174859862.png)
+
+
+
+导出csv
+
+我们需要注意的是，由于csv是逗号分隔的，因此如果带有英文逗号的最好改为中文逗号
+
+```CSV
+标志,ID,人物,位置,内容,跳转,效果,目标
+#,0,公子,左,好久不见，荧,1,,
+#,1,公子,左,我又变强了不少哦，要来切磋一下吗,2,,
+#,2,公子,左,...开玩笑的。嗯，怎么了,3,,
+&,3,荧,右,在这里还习惯吗？,10,好感度@1,公子
+&,4,,,想一起聊聊天吗？,9,,
+&,5,,,有什么想做的吗？,9,,
+&,6,,,早啊，达达利亚。,7,,
+#,7,公子,左,早啊，荧。,8,,
+#,8,公子,左,来尝尝我做的早饭吧！,9,饱食度@1,荧
+END,9,,,,,,
+#,10,公子,左,嗯，这里太适合居家生活了,11,,
+#,11,公子,左,真想把冬妮娅、安东和托克他们都叫来住...,12,,
+&,12,荧,右,我这住不下这么多人...,14,,
+&,13,荧,右,其实我没有你想得那么擅长照顾孩子...,14,,
+#,14,公子,左,我只是想到，冬妮娅他们有你陪的话，一定会很开心的,9,,
+```
+
+
+
+拖进来之后发现是乱码的
+
+![image-20230112175804082](zyy恐怖游戏制作.assets/image-20230112175804082.png)
+
+
+
+另存为的时候改一下编码方式？
+
+![image-20230112180420597](zyy恐怖游戏制作.assets/image-20230112180420597.png)
+
+
+
+##### group
+
+![image-20230112223918478](zyy恐怖游戏制作.assets/image-20230112223918478.png)
+
+
+
+
+
 ## 动画相关
 
 #### Unity Animator 切换动作时物体的位置发生变化
@@ -1421,3 +1672,11 @@ https://www.youtube.com/watch?v=FRIyjs102-c
 篮球入框/踢到  触发唱跳  加音乐
 
 ![image-20230108144659267](zyy恐怖游戏制作.assets/image-20230108144659267.png)
+
+
+
+
+
+“#“ 表示对方
+
+“&” player
