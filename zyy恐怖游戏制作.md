@@ -1641,6 +1641,8 @@ https://www.youtube.com/watch?v=FRIyjs102-c
 
 <img src="zyy恐怖游戏制作.assets/image-20230111143209214.png" alt="image-20230111143209214" style="zoom:50%;" />
 
+
+
 ## 想继续加的
 
 看到之后改变灯的颜色 √
@@ -1659,7 +1661,7 @@ https://www.youtube.com/watch?v=FRIyjs102-c
 
 第一人称第三人称切换的时候相机方向  √（x轴旋转的还没有 但是感觉不用弄这个功能）
 
-对话系统 NPC
+对话系统 NPC（还有视角问题没解决） √
 
 让相机不会卡进墙里面
 
@@ -1670,6 +1672,8 @@ https://www.youtube.com/watch?v=FRIyjs102-c
 更多怪
 
 篮球入框/踢到  触发唱跳  加音乐
+
+NPC
 
 ![image-20230108144659267](zyy恐怖游戏制作.assets/image-20230108144659267.png)
 

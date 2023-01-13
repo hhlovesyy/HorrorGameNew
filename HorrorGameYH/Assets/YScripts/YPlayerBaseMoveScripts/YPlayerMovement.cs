@@ -38,16 +38,18 @@ public class YPlayerMovement : MonoBehaviour
     private Animator PlayerAnimator;
 
     //private int animStateCache;
+    //
+    // [Header(("camera"))]
+    // private bool changeCameraFlag = false;
+    //
+    // public float changeCameratimer;
+    // private float changeCameratimerTemp;
+    // // private bool canChangeCamera;
+    //
+    // public GameObject cameraFirstPer;
+    // public GameObject cameraThirdPer;
     
-    [Header(("camera"))]
-    private bool changeCameraFlag = false;
-
-    public float changeCameratimer;
-    private float changeCameratimerTemp;
-    // private bool canChangeCamera;
-
-    public GameObject cameraFirstPer;
-    public GameObject cameraThirdPer;
+    
     // public float MX = 0f;
     // public float MY = 0f;
     // public YMoveCameraThirdPer y3d;
@@ -66,7 +68,7 @@ public class YPlayerMovement : MonoBehaviour
         playerGo = PlayerAnimator.gameObject;
         
         //camera
-        changeCameratimerTemp = 0f;
+        //changeCameratimerTemp = 0f;
 
         // y3d = cameraThirdPer.GetComponentInChildren<YMoveCameraThirdPer>();
         // y1d = cameraFirstPer.GetComponentInChildren<YPlayerCam>();
@@ -134,21 +136,21 @@ public class YPlayerMovement : MonoBehaviour
             Jump();
             Invoke(nameof(resetJump),jumpCooldown);
         }
-        //切换相机
-        if (changeCameratimerTemp <= 0)
-        {
-            if (Input.GetKey(KeyCode.U))
-            {
-                changeCameraFlag = !changeCameraFlag;
-                cameraFirstPer.SetActive(changeCameraFlag);
-                cameraThirdPer.SetActive(!changeCameraFlag);
-                changeCameratimerTemp = changeCameratimer;
-            }
-        }
-        else
-        {
-            changeCameratimerTemp -= Time.deltaTime;
-        }
+        // //切换相机
+        // if (changeCameratimerTemp <= 0)
+        // {
+        //     if (Input.GetKey(KeyCode.U))
+        //     {
+        //         changeCameraFlag = !changeCameraFlag;
+        //         cameraFirstPer.SetActive(changeCameraFlag);
+        //         cameraThirdPer.SetActive(!changeCameraFlag);
+        //         changeCameratimerTemp = changeCameratimer;
+        //     }
+        // }
+        // else
+        // {
+        //     changeCameratimerTemp -= Time.deltaTime;
+        // }
         
     }
     private void FixedUpdate()
