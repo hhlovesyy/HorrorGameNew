@@ -115,6 +115,12 @@ public class YDialogManager : MonoBehaviour
             
             // YCameraManager.instance.DialogCamera.gameObject.SetActive(false);
             YCameraManager.instance.changeDialogCamera(null,false);
+            
+            if (CurQuestable == null)
+            {
+                return;//有的NPC没有任务
+            }
+            CurQuestable.DelegateQuest();//对话结束 发放委托
         }
     }
     public void showDialog(string[] lines)
@@ -221,6 +227,12 @@ public class YDialogManager : MonoBehaviour
                 
                 // YCameraManager.instance.DialogCamera.gameObject.SetActive(false);
                 YCameraManager.instance.changeDialogCamera(null,false);
+
+                if (CurQuestable == null)
+                {
+                    return;//有的NPC没有任务
+                }
+                CurQuestable.DelegateQuest();//对话结束 发放委托
             }
         }
     }
