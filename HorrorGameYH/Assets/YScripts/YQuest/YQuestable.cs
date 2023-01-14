@@ -15,6 +15,7 @@ public class YQuestable : MonoBehaviour
         {
             //可以领取这个任务
             YPlayerProp.instance.questList.Add(quest);
+            quest.questStates = YQuest.QuestStates.Accepted;
         }
         else 
         {
