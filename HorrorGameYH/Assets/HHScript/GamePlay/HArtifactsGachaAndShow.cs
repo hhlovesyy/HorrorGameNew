@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class HArtifactsGachaAndShow : MonoBehaviour
@@ -8,7 +9,11 @@ public class HArtifactsGachaAndShow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        character.gameObject.GetComponent<SkinnedMeshRenderer>().SetBlendShapeWeight(0,100);
+        Mesh m = character.gameObject.GetComponent<SkinnedMeshRenderer>().sharedMesh;
+        string name = m.GetBlendShapeName(0);
+        print(name);
+        int blendShapeIndex = m.GetBlendShapeIndex("");
+        character.gameObject.GetComponent<SkinnedMeshRenderer>().SetBlendShapeWeight(blendShapeIndex,100);
     }
 
     // Update is called once per frame
