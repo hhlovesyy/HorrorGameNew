@@ -338,6 +338,183 @@ https://developer.aliyun.com/article/464819
 
 
 
+##### 防止相机穿墙
+
+[(82条消息) Unity3D 自制摄像机不穿墙/不穿物体（射线cast方法）_iteapoy的博客-CSDN博客_collider.cast()](https://blog.csdn.net/iteapoy/article/details/88927699)
+
+[(82条消息) Unity3d 防止相机“穿墙”功能_马哥2017的博客-CSDN博客_unity相机墙角](https://blog.csdn.net/u014306293/article/details/73381514)
+
+```C#
+bool detectFor()
+    {
+        RaycastHit hitInfo;
+        //Vector3 fwd = gameObject.transform.TransformDirection(Vector3.forward);
+        //if (Physics.SphereCast(gameObject.transform.position,0.1f, gameObject.transform.forward, out hitInfo, distance))
+        if (Physics.Raycast(gameObject.transform.position,gameObject.transform.forward, out hitInfo, distance))
+        {
+            string name = hitInfo.collider.gameObject.tag;
+            if (name != "Player")
+            {
+                //如果射线碰撞的不是相机，那么就取得 相机到射线碰撞点 的距离
+                float currentDistance = Vector3.Distance(transform.position,hitInfo.point);
+                //如果射线碰撞点小于玩家与相机本来的距离，就说明角色身后是有东西，为了避免穿墙，就把相机拉近
+                if (currentDistance < distance)
+                {
+                    //Debug.DrawLine(transform.position,transform.position+gameObject.transform.forward*distance ,Color.blue,distance);
+                    
+                    //m_transsform.position = hitInfo.point;
+                    //Debug.Log("hit"+hitInfo.collider);
+                    //Debug.Log(distance+"ddd");
+                    //Vector3.Normalize(Camera.main.transform.TransformDirection(Vector3.back)) * dis * Time.deltaTime;
+  
+                    distance = Mathf.Lerp(distance,distance-currentDistance,Time.deltaTime*10f);
+                    if (distance <= 0.65f) distance = 0.65f;
+                    //Debug.Log(distance);
+                    //Debug.DrawLine(transform.position,transform.position+gameObject.transform.forward*distance ,Color.red,distance);
+
+                    CameraState = 1;//forward state
+                    return false;
+                }
+            }
+            CameraState = 0;
+            return true;
+        }
+        CameraState = 0;
+        return true;
+    }
+```
+
+
+
+```C#
+bool detectBack()
+{
+    RaycastHit hitInfo;
+    //反方向退回去 但是需要注意的是 要退到墙上
+    if (distance < lockDistance)
+    {
+        
+        //if (Physics.SphereCast(gameObject.transform.position, 0.1f, gameObject.transform.forward * (-1),
+        if (Physics.Raycast(gameObject.transform.position,  gameObject.transform.forward * (-1),
+                out hitInfo,
+                distance))
+        {
+            string name = hitInfo.collider.gameObject.tag;
+            if (name != "Player")
+            {
+                //Debug.Log("反方向退回去");
+                //Debug.DrawLine(transform.position, transform.position + gameObject.transform.forward * (-1) * distance,Color.green, distance);
+                //如果射线碰撞的不是相机，那么就取得 相机到射线碰撞点 的距离
+                float backDistance = Vector3.Distance(transform.position, hitInfo.point);
+    
+                float tempDistance = distance + backDistance;
+                if (tempDistance <= lockDistance)
+                {
+                    distance = Mathf.Lerp(distance, tempDistance, Time.deltaTime * 10f);
+                }
+
+                CameraState = 2;//backState
+                return false;
+            }
+            //Debug.DrawLine(transform.position, transform.position + gameObject.transform.forward * (-1) * distance,Color.yellow, distance);
+            //Debug.Log("name == Player");
+        }
+        //背后没墙 true（）安心退
+        else
+        {
+            //Debug.Log("back no walls");
+            //distance = lockDistance;
+            distance = Mathf.Lerp(distance,lockDistance,Time.deltaTime*10f);
+            CameraState = 0;
+            return true;
+        }
+    }
+    //背后没墙 true（）安心退
+    else
+    {
+        //Debug.Log("back no walls");
+        //distance = lockDistance;
+        distance = Mathf.Lerp(distance, lockDistance, Time.deltaTime * 10f);
+        CameraState = 0;
+        return true;
+    }
+    CameraState = 0;
+    return true;
+}
+```
+
+
+
+刚开始：
+
+```C#
+        //! 代表前面有墙壁 相机正在往前拉
+        //代表没障碍 OK走的
+        bool isdf = detectFor();
+        if (isdf)
+        {
+            bool isdt = detectBack();
+        }
+```
+
+优化为状态机：
+
+```C#
+switch (CameraState)
+{
+    case 0:
+        if (detectFor())
+        {
+            detectBack();
+        }
+        break;
+    case 1:
+        detectFor();
+        break;
+    case 2:
+        detectBack();
+        break;
+}
+```
+
+
+
+###### 要点1 四个方向Raycast（此处用了两个方向）
+
+###### 进阶1 层遮罩LayerMask
+
+方法1
+
+某些碰撞体(collider) 可能只被用作trigger，但是却受到了碰撞检测。
+
+一个比较简单的方法：
+
+把物体放置到 Ignore Raycast层
+
+![img](zyy恐怖游戏制作.assets/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L2l0ZWFwb3k=,size_16,color_FFFFFF,t_70.png)
+
+
+
+![image-20230114135154793](zyy恐怖游戏制作.assets/image-20230114135154793.png)
+
+
+
+方法2见:
+
+[(82条消息) Unity3D 自制摄像机不穿墙/不穿物体（射线cast方法）_iteapoy的博客-CSDN博客_unity相机防穿墙](https://blog.csdn.net/iteapoy/article/details/88927699)
+
+
+
+绿色线代表往正面看 红色线代表往背面看
+
+![image-20230114124453863](zyy恐怖游戏制作.assets/image-20230114124453863.png)
+
+
+
+（无意义草稿：应该没用）
+
+<img src="zyy恐怖游戏制作.assets/image-20230114130806991.png" alt="image-20230114130806991" style="zoom: 33%;" />
+
 ### 人物移动
 
 
@@ -955,6 +1132,36 @@ statemachine
 
 
 #### 单例模式
+
+1 饿汉模式：
+
+```C#
+public class YPlayerProp : MonoBehaviour
+{
+    public static YPlayerProp instance;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if(instance!=this)
+        {
+            Destroy(gameObject);
+        }
+        DontDestroyOnLoad(gameObject);
+    }
+}
+```
+
+调用时	`YPlayerProp.instance.函数名/变量`
+
+
+
+2
+
+
 
 https://developer.aliyun.com/article/239654
 
@@ -1625,6 +1832,24 @@ https://blog.csdn.net/weixin_41767230/article/details/109356322
 
 
 
+## 任务系统
+
+【【任务系统/上】通过与NPC对话领取不同种类的任务，并且在UI任务列表更新显示（附：对话系统，单向平台设计，场景转换，单例模式）】 https://www.bilibili.com/video/BV1ut4y1973c/?share_source=copy_web&vd_source=067de257d5f13e60e5b36da1a0ec151e
+
+![image-20230114170109345](zyy恐怖游戏制作.assets/image-20230114170109345-16736868698481.png)
+
+![image-20230114171456399](zyy恐怖游戏制作.assets/image-20230114171456399.png)
+
+
+
+```C#
+[System.Serializable]
+```
+
+![image-20230114195306174](zyy恐怖游戏制作.assets/image-20230114195306174.png)
+
+![image-20230114195250710](zyy恐怖游戏制作.assets/image-20230114195250710.png)
+
 **已经有的功能点：**
 
 切换人物
@@ -1661,9 +1886,9 @@ https://www.youtube.com/watch?v=FRIyjs102-c
 
 第一人称第三人称切换的时候相机方向  √（x轴旋转的还没有 但是感觉不用弄这个功能）
 
-对话系统 NPC（还有视角问题没解决） √
+对话系统 NPC（解决视角问题） √
 
-让相机不会卡进墙里面
+让相机不会卡进墙里面  √
 
 游泳
 
@@ -1675,7 +1900,15 @@ https://www.youtube.com/watch?v=FRIyjs102-c
 
 NPC
 
+
+
 ![image-20230108144659267](zyy恐怖游戏制作.assets/image-20230108144659267.png)
+
+FPS
+
+怪 相机抖动问题
+
+荡过去
 
 
 
