@@ -108,3 +108,55 @@ public class LightFlickerEffect : MonoBehaviour
 ```
 
 - 下午:把光的Flitch效果和电池电量下降联系到一起,加一个简单的UI,看懂目前项目的代码和Shader
+
+
+
+
+
+- 2023.1.9 todo:
+  - (1)小地图功能:[(23条消息) Unity小地图Minimap制作全面功能介绍篇_紫龙大侠的博客-CSDN博客](https://blog.csdn.net/alayeshi/article/details/115913174)
+  - (2)抽卡系统:[关于抽卡，作为策划我所知道的一切 - 知乎 (zhihu.com)](https://zhuanlan.zhihu.com/p/356187524),尝试复现一下,资源需要找一找
+  - (3)打开宝箱触发宝箱消融的shader效果
+  - (4)研究一下迷宫生成的算法
+  - (5)Minimap渲染出来的Render Texture尝试加一个后处理的相关效果
+
+
+
+## 三.各个功能点学习
+
+### 1.小地图功能
+
+参考链接:[(23条消息) Unity小地图制作与美化_紫龙大侠的博客-CSDN博客](https://blog.csdn.net/alayeshi/article/details/115914212)
+
+接下来给出一些在制作小地图功能的时候遇到的问题,并给出解决方案.
+
+
+
+#### (1)Mask在UI中的应用
+
+首先,Mask是一张有透明度的图,其中透明的部分会使得被遮挡的图像不显示,下图显示了使用Mask前的UI图片,Mask图片以及使用了Mask之后的UI:
+
+![image-20230109183711301](ZHH%E6%81%90%E6%80%96%E6%B8%B8%E6%88%8F%E5%88%B6%E4%BD%9C.assets/image-20230109183711301.png)
+
+可以看到,与正常Mask的定义是保持一致的.接下来记录这种Mask类型UI的做法:
+
+首先,新建Canvas,在Canvas下面放置一个Image子节点,为其添加Mask组件,然后选择Source Image为上图中间那张四周含有透明通道的图,命名为Mask;
+
+然后,在Mask节点下面再创建一个Raw Image(Raw Image的特点是其清晰度可以达到很好的级别),然后指定对应的Image,就可以实现Mask的效果了,如下图所示:
+
+![image-20230109184132543](ZHH%E6%81%90%E6%80%96%E6%B8%B8%E6%88%8F%E5%88%B6%E4%BD%9C.assets/image-20230109184132543.png)
+
+**补充:可以将Mask下方的子节点Minimap的位置进行重置,从而更好地看到效果.**
+
+
+
+
+
+### 2.迷宫生成功能
+
+#### (1)Prim&Kruskal算法生成迷宫
+
+最终参考的教程和对应的代码:[随机迷宫生成算法整理分析 | indienova 独立游戏](https://indienova.com/u/cocolate/blogread/1493)
+
+参考链接:[Buckblog: Maze Generation: Prim's Algorithm (jamisbuck.org)](http://weblog.jamisbuck.org/2011/1/10/maze-generation-prim-s-algorithm)
+
