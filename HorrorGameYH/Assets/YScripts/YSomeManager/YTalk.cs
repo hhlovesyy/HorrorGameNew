@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -14,10 +15,19 @@ public class YTalk : MonoBehaviour
     public TextAsset dialogTextAsset;
 
     public Transform lookAtTrans;
+
+    private YQuestable Questable;//表名它有委派任务的能力
+
+    private void Start()
+    {
+        Questable = GetComponent<YQuestable>();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
+            YDialogManager.instance.CurQuestable = Questable;
             isEnter = true;
             YDialogManager.instance.showName(name);
             YDialogManager.instance.showTalkEnter.SetActive(true);
@@ -28,6 +38,7 @@ public class YTalk : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            YDialogManager.instance.CurQuestable = null;
             YDialogManager.instance.showTalkEnter.SetActive(false);
             isEnter = false;
         }

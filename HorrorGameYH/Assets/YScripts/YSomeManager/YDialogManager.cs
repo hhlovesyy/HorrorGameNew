@@ -42,9 +42,7 @@ public class YDialogManager : MonoBehaviour
 
     public bool cursorOut;
 
-    //public Camera DialogCamera;
-    
-    //public string tempName;
+    public YQuestable CurQuestable;//当前正在说话的对象 有什么任务
     private void Awake()
     {
         if (instance == null) 
