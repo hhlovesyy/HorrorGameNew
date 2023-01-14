@@ -12,8 +12,8 @@ public class HArtifactsGachaAndShow : MonoBehaviour
         Mesh m = character.gameObject.GetComponent<SkinnedMeshRenderer>().sharedMesh;
         string name = m.GetBlendShapeName(0);
         print(name);
-        int blendShapeIndex = m.GetBlendShapeIndex("");
-        character.gameObject.GetComponent<SkinnedMeshRenderer>().SetBlendShapeWeight(blendShapeIndex,100);
+        //int blendShapeIndex = m.GetBlendShapeIndex("");
+        //character.gameObject.GetComponent<SkinnedMeshRenderer>().SetBlendShapeWeight(blendShapeIndex,100);
     }
 
     // Update is called once per frame
