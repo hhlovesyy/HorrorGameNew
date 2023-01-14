@@ -5,6 +5,7 @@ using UnityEngine;
 public class HCharacterAttrBase : MonoBehaviour
 {
     //todo:基础属性暂时可以在面板调整,后面可能会改掉
+    //todo:暂时还没有处理元素精通和元素充能,以及体力相关的内容,会在后面进行描述
     // 基础属性-白值部分
     [SerializeField]
     private float healthUpperLimitBase;
@@ -21,10 +22,15 @@ public class HCharacterAttrBase : MonoBehaviour
     private int addElementalMastery;
     private int addStamina;
     
+    //进阶属性:
+    private float CRITRate; //暴击率,比如35
+    private float CRITDMG; //爆伤率,比如200
+    
     //圣遗物数组:todo:暂时设置为public,后面改为private
     public HArtifactAttr[] artifacts = new HArtifactAttr[5];
     public HWeaponAttr weapon;
-    
+
+    private float totalHealthBlood;
     
     /// <summary>
     /// 判定角色死亡
@@ -113,11 +119,31 @@ public class HCharacterAttrBase : MonoBehaviour
     private void ClearAllValues()
     {
         addHealth = 0;
+        CRITRate = 5;
+        CRITDMG = 50;
+        //todo:如果角色突破的话这个值还会有更新
+    }
+    
+    //计算初始的角色伤害值,包括不打反应和打反应(有比如冰伤杯的加成),输入参数为伤害类型
+    private float CalculateAttackDamageOrigin(AttackType attackType)
+    {
+        float originAttackDmgValue = attackBase + addAttack;
+        if (attackType == AttackType.NormalAttack)
+        {
+            float randValue = Random.Range(0, 99);
+            if (randValue - CRITRate < 0)  //暴击的情况
+            {
+                originAttackDmgValue *= (1 + CRITDMG/100.0f);
+            }
+            
+        }
+
+        return originAttackDmgValue;
     }
     
     void Start()
     {
-        ClearAllValues();
+        ClearAllValues(); 
         
         
         //healthUpperLimitBase = 5013f;
@@ -126,7 +152,8 @@ public class HCharacterAttrBase : MonoBehaviour
         // artifact1.HealthValueAdd = 0;
         // HArtifactAttr[] artifacts = { artifact1 };
 
-        CalculateArtifactsAndWeaponAddAttr(artifacts,weapon);
+        CalculateArtifactsAndWeaponAddAttr(artifacts,weapon);  //todo:注意要在一开始就算好角色所有的基础面板
+        totalHealthBlood = healthUpperLimitBase + addHealth;
     }
 
     // Update is called once per frame
@@ -135,10 +162,38 @@ public class HCharacterAttrBase : MonoBehaviour
         
     }
 
-    //角色受到伤害的基本数值和怪物信息
-    private void beHurtedValue()
+    //角色受到伤害的基本数值和怪物信息,以及怪物可以提供的元素类型
+    public void beHurtedValue(float value, HMonsterAttrBase monsterInfo, ElementBaseType elementtype)
     {
+        float totalBeHurtedValue = value;
+        float defenseDecreaseHurtPercentage = CalculateDefenseDecreaseHurtedValue(monsterInfo.MonsterLevel, value);
+        totalBeHurtedValue *= (1.0f - defenseDecreaseHurtPercentage);
         
+        
+
+    }
+
+    //根据传入数值对角色进行扣血/加血操作
+    public void CalculateBlood(float finalValue)
+    {
+        totalHealthBlood += finalValue;
+        if (totalHealthBlood <= 0)
+        {
+            CharacterDie(totalHealthBlood);
+        }
+    }
+
+    //计算角色收到伤害的防御力减伤百分比
+    private float CalculateDefenseDecreaseHurtedValue(int monsterLevel, float value)
+    {
+        //剧变反应无法被防御力减免(比如被草元素萨满点燃)
+        //todo:if剧变反应,return 0
+        //防御力减伤百分比公式
+        float totalDefenseValue = defenseBase + addDefense;
+        float decreasePercentage = totalDefenseValue * 1.0f / (totalDefenseValue + 5 * monsterLevel + 500);
+        print("防御力减伤百分比:");
+        print(decreasePercentage);
+        return decreasePercentage;
     }
 }
 

@@ -9,6 +9,8 @@ public class HMonsterAttrBase : MonoBehaviour
     [SerializeField]
     private int _monsterLevel;
 
+    [SerializeField] private ElementBaseType element;
+
     public int MonsterLevel
     {
         set { _monsterLevel = value; }
@@ -24,6 +26,7 @@ public class HMonsterAttrBase : MonoBehaviour
             Debug.LogError("target dont have characterAttrBase script!");
             return;
         }
+        characterAttrBase.beHurtedValue(value,this,element);
         
     }
     // Start is called before the first frame update

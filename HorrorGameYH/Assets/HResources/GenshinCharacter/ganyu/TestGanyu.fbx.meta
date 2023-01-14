@@ -13,7 +13,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: "\u808C"
-    second: {fileID: 2100000, guid: 6224ddd6780fd7b46acb8b653f9a376d, type: 2}
+    second: {fileID: 2100000, guid: d3e0b0fa5e232f145842f4a4e006c65e, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
