@@ -1,7 +1,29 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using XArrayPool = Unity.VisualScripting.XArrayPool;
+
+//todo:根据圣遗物的索引定位到上次旋转的位置
+
+[Serializable]
+public class ArtifactPosStruct
+{
+    public Vector3 artifactPos;
+    public Quaternion artifactRot;
+    public Vector3 artifactScale;
+
+    public ArtifactPosStruct(Vector3 pos,Quaternion rot, Vector3 scale)
+    {
+        artifactPos = pos;
+        artifactRot = rot;
+        artifactScale = scale;
+    }
+
+    public ArtifactPosStruct()
+    {
+    }
+}
 
 public class HGenshinArtifactsShow : MonoBehaviour
 {
@@ -26,15 +48,15 @@ public class HGenshinArtifactsShow : MonoBehaviour
     public Transform artifactDetailLocation;
     private Transform chooseArtifactPos;
     private int curChooseIndex;
-    public Transform[] artifactsPoses;
-
+    //public Transform[] artifactsPoses;
+    public ArtifactPosStruct[] artifactPosStructs;
 
     void ArtifactsRotate()
     {
-        // if (isCheckingArtifact)
-        // {
-        //     return;//如果正在检查圣遗物
-        // }
+        if (isCheckingArtifact)
+        {
+             return;//如果正在检查圣遗物
+        }
         
         artifactsCenter.Rotate(Vector3.up, -rotateIdleSpeed, Space.World);
         //鼠标拖动5个圣遗物旋转
@@ -74,28 +96,28 @@ public class HGenshinArtifactsShow : MonoBehaviour
             // todo:如果在拖拽状态的时候不要进点击圣遗物的界面,不过暂时没有很好地实现思路,后面再说
             if (hitinfo.collider.gameObject.CompareTag("canMousePointTo"))
             {
-                // if (isCheckingArtifact) 
-                //     return;
+                if (isCheckingArtifact) 
+                     return;
                 //如果点击圣遗物,进入详情界面
                 
-                //for(int i=0;i<artifactNum;i++) rectTransform[i].gameObject.SetActive(false);
+                for(int i=0;i<artifactNum;i++) rectTransform[i].gameObject.SetActive(false);
 
                 print(hitinfo.collider.gameObject.name);
-                // for (int i = 0; i < artifactNum; i++)
-                // {
-                //     //print(worldPos[i].gameObject.name);
-                //     //点击某个圣遗物之后,其他的圣遗物可视化要去掉,并且被点到的圣遗物要放大往上
-                //     if (hitinfo.collider.gameObject.name != worldPos[i].gameObject.name)
-                //     {
-                //         worldPos[i].gameObject.SetActive(false);
-                //     }
-                //     else
-                //     {
-                //         // worldPos[i].gameObject.transform.localScale = new Vector3(0.3f,0.3f,0.3f);
-                //         // worldPos[i].gameObject.transform.position = artifactDetailLocation.position;
-                //     }
-                // }
-                //isCheckingArtifact = true;
+                 for (int i = 0; i < artifactNum; i++)
+                 {
+                     //print(worldPos[i].gameObject.name);
+                     //点击某个圣遗物之后,其他的圣遗物可视化要去掉,并且被点到的圣遗物要放大往上
+                     if (hitinfo.collider.gameObject.name != worldPos[i].gameObject.name)
+                     {
+                         worldPos[i].gameObject.SetActive(false);
+                     }
+                     else
+                     {
+                          worldPos[i].gameObject.transform.localScale = new Vector3(0.3f,0.3f,0.3f);
+                          worldPos[i].gameObject.transform.position = artifactDetailLocation.position;
+                     }
+                 }
+                isCheckingArtifact = true;
                 
             }
         }
@@ -109,17 +131,23 @@ public class HGenshinArtifactsShow : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        //rectTransform = new RectTransform[artifactNum];
-        //worldPos = new Transform[artifactNum];
         pixelHeight = sceneCamera.pixelHeight;
         pixelWidth = sceneCamera.pixelWidth;
         Vector3 screenPos = sceneCamera.WorldToScreenPoint(worldPos[0].transform.position);
         cameraDistance = screenPos.z;
         levelOffset = new Vector3(0f, -pixelHeight / 7.0f, 0f);
         
-        //isCheckingArtifact = false;
-        //artifactsPoses = new Transform[artifactNum];
-        //for(int i=0;i<artifactNum;i++) artifactsPoses[i] = worldPos[i].gameObject.transform;
+        isCheckingArtifact = false;
+        artifactNum = 5;
+        
+        //坑点!!!!不能记录Transform,因为transform是引用类型,会随着位置动而发生改变,真阴间.
+        artifactPosStructs = new ArtifactPosStruct[artifactNum];
+        for (int i = 0; i < artifactNum; i++)
+        {
+            //请注意这是C#的特点,这里面也要new一下,不然会报错
+            artifactPosStructs[i] =
+                new ArtifactPosStruct(worldPos[i].position, worldPos[i].rotation, worldPos[i].localScale);
+        }
         //print("llalala");
         //print(worldPos[0].gameObject.transform.position);
         ResetArtifacts();
@@ -130,8 +158,10 @@ public class HGenshinArtifactsShow : MonoBehaviour
         for (int i = 0; i < artifactNum; i++)
         {
             worldPos[i].gameObject.SetActive(true);
-            rectTransform[i].gameObject.SetActive(true);
-            //worldPos[0].gameObject.transform.position = new Vector3(0.52f, 1.063f, 0f);
+            //rectTransform[i].gameObject.SetActive(true);
+            worldPos[i].gameObject.transform.position = artifactPosStructs[i].artifactPos;
+            worldPos[i].gameObject.transform.rotation = artifactPosStructs[i].artifactRot;
+            worldPos[i].gameObject.transform.localScale = artifactPosStructs[i].artifactScale;
         }
     }
     //退出当前界面的效果
@@ -140,7 +170,7 @@ public class HGenshinArtifactsShow : MonoBehaviour
         if (Input.GetKey(KeyCode.Escape))
         {
             ResetArtifacts();
-            //isCheckingArtifact = false;
+            isCheckingArtifact = false;
         }
     }
 
