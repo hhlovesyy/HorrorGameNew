@@ -11,6 +11,8 @@ public class YPlayerProp : MonoBehaviour
     public int gold;
     public int yuanshi;
     public List<YQuest> questList=new List<YQuest>();
+
+    public int itemAmount;
     //后面也可以改为 
     //public Dictionary<string,YQuest> questDic=new Dictionary<string,YQuest>();
     private void Awake()

@@ -9,7 +9,7 @@ public class HFlashLightChange : MonoBehaviour
     private int energy;
     private bool energyGettingDown;
     public float energyGettingDownSpeed = 100f;
-    public float energyDownInterval = 5f; //ÍùÏÂÏÂ½µµÄ·ù¶È,Ò»´ÎÏÂ½µ¶àÉÙenergy
+    public float energyDownInterval = 5f; //ï¿½ï¿½ï¿½ï¿½ï¿½Â½ï¿½ï¿½Ä·ï¿½ï¿½ï¿½,Ò»ï¿½ï¿½ï¿½Â½ï¿½ï¿½ï¿½ï¿½ï¿½energy
 
     private bool canUseFlashLight;
     private LightFlickerEffect lightFlickereffect;
@@ -31,7 +31,7 @@ public class HFlashLightChange : MonoBehaviour
         lightFlickereffect = lightSource.gameObject.GetComponent<LightFlickerEffect>();
         if (!lightFlickereffect)
         {
-            Debug.LogError("¹âÔ´ÉÏÃæÃ»ÓÐFlicker½Å±¾!Çë¼ì²é!");
+//            Debug.LogError("ï¿½ï¿½Ô´ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½Flickerï¿½Å±ï¿½!ï¿½ï¿½ï¿½ï¿½!");
         }
         count = 0;
     }
@@ -45,7 +45,7 @@ public class HFlashLightChange : MonoBehaviour
             if (!canUseFlashLight) return;
             isOn = !isOn;
             lightSource.SetActive(isOn);
-            if (isOn && energy > 0)  //Èç¹ûµãÁÁÊÖµçÍ²,¿ªÊ¼½µµÍÁÁ¶È
+            if (isOn && energy > 0)  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½Í²,ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             {
                 energyGettingDown = true;
             }

@@ -1850,6 +1850,274 @@ https://blog.csdn.net/weixin_41767230/article/details/109356322
 
 ![image-20230114195250710](zyy恐怖游戏制作.assets/image-20230114195250710.png)
 
+
+
+暂时记录几个
+
+为了晨曦酒庄的酒而来 g
+
+
+
+目前，如果需要弄一个新的任务：
+
+第一步:
+
+给可以去接取任务的NPC那里挂一个脚本：并填写相应信息
+
+![image-20230116114831212](zyy恐怖游戏制作.assets/image-20230116114831212.png)
+
+
+
+对话处如果有一些关于任务额外的对话 也可以将csv填进去
+
+<img src="zyy恐怖游戏制作.assets/image-20230116163148674.png" alt="image-20230116163148674" style="zoom: 67%;" />
+
+第二步：
+
+任务目标处
+
+挂上脚本YQuestTarget并填写对应的任务等信息
+
+![image-20230116163527490](zyy恐怖游戏制作.assets/image-20230116163527490.png)
+
+
+
+以下暂时没实现 用对话后会出现......代替
+
+有时候这个角色可以对话 
+
+有时候不能对话
+
+我们可以存一个是否能对话的状态，不能对话的话就给不让他出现那个F的标志
+
+可以让他每次任务推进一步就update一下
+
+
+
+暂存0116ytalk
+
+```C#
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+
+public class YTalk : MonoBehaviour
+{
+    [SerializeField]private bool isEnter;
+    [TextArea(1, 3)] 
+    public string[] lines;
+
+    public string name;
+    public bool isAsset;
+    public TextAsset dialogTextAsset;
+
+    public Transform lookAtTrans;
+
+    [Header("Quest")]
+    private YQuestable Questable;//表明它有委派任务的能力
+
+    public YQuestTarget QuestTarget;
+    [TextArea(1, 4)] public string[] congratesLines;
+    [TextArea(1, 4)] public string[] completedLines;
+    
+    public TextAsset dialogCongratesTextAsset;
+    public TextAsset dialogDefaultTextAsset;
+    public TextAsset dialogWaitForCompTextAsset;
+
+    //public TextAsset defaultWordTextAsset;
+    
+    //是否是可以交互状态
+    //public bool bInteractive;
+    private void Start()
+    {
+        Questable = GetComponent<YQuestable>();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            YDialogManager.instance.CurQuestable = Questable;
+            YDialogManager.instance.questTarget = QuestTarget;
+            YDialogManager.instance.talkable = this;
+            
+            isEnter = true;
+            YDialogManager.instance.showName(name);
+            YDialogManager.instance.showTalkEnter.SetActive(true);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            YDialogManager.instance.CurQuestable = null;
+            YDialogManager.instance.showTalkEnter.SetActive(false);
+            isEnter = false;
+        }
+    }
+
+    void Update()
+    {
+        if (isEnter && Input.GetKeyDown(KeyCode.F)&& YDialogManager.instance.dialogBox.activeInHierarchy==false)
+        {
+            //YDialogManager.instance.changeDialogCamera(lookAtTrans);
+            //camera 移动
+            if (!isAsset)
+            {
+                YDialogManager.instance.isTextAsset = false;
+                if (Questable == null)
+                {
+                    YDialogManager.instance.showDialog(lines);
+                }
+                else
+                {
+                    if (Questable.quest.questStates == YQuest.QuestStates.Waitting)
+                    {
+                        YDialogManager.instance.showDialog(lines);
+                    }
+                    else if(Questable.quest.questStates == YQuest.QuestStates.Accepted)
+                    {
+                        //YDialogManager.instance.showDialog(waitingQuestLines);
+                        return;
+                    }
+                    else if (Questable.quest.questStates == YQuest.QuestStates.Completed
+                             &&! Questable.isFinished)//YQuest.QuestStates.Completed
+                    {
+                        if (YDialogManager.instance.checkQuestIsCompleted())
+                        {
+                            YDialogManager.instance.showDialog(congratesLines);
+                            Questable.isFinished = true;
+                        }
+                        
+                    }
+                    else
+                    {
+                        YDialogManager.instance.showDialog(completedLines);
+                    }
+                }
+
+                
+            }
+            else
+            {
+                YDialogManager.instance.isTextAsset = true;
+                
+                if (Questable == null)
+                {
+                    toShowdialogTextAsset(dialogTextAsset);
+                }
+                else
+                {
+                    if (Questable.quest.questStates == YQuest.QuestStates.Waitting)
+                    {
+                        toShowdialogTextAsset(dialogTextAsset);
+                        //YDialogManager.instance.readText(dialogTextAsset);
+                    }
+                    else if(Questable.quest.questStates == YQuest.QuestStates.Accepted)
+                    {
+                        toShowdialogTextAsset(dialogWaitForCompTextAsset);
+                       
+                        //YDialogManager.instance.showDialog(waitingQuestLines);
+                        //return;
+                    }
+                    else if (Questable.quest.questStates == YQuest.QuestStates.Completed
+                             &&! Questable.isFinished)//YQuest.QuestStates.Completed
+                    {
+                        if (YDialogManager.instance.checkQuestIsCompleted())
+                        {
+                            //读取完成任务的对话
+                            toShowdialogTextAsset(dialogCongratesTextAsset);
+                            Questable.isFinished = true;
+                        }
+                        
+                    }
+                    else
+                    {
+                        toShowdialogTextAsset(dialogDefaultTextAsset);
+                    }
+                }
+                
+            }
+            
+            YDialogManager.instance.showTalkEnter.SetActive(false);
+            YCameraManager.instance.changeDialogCamera(lookAtTrans,true);
+        }
+    }
+
+    public void toShowdialogTextAsset(TextAsset textAsset)
+    {
+        if (textAsset)
+        {
+            YDialogManager.instance.readText(textAsset);
+        }
+    }
+}
+
+```
+
+![image-20230116180055994](zyy恐怖游戏制作.assets/image-20230116180055994.png)
+
+##### 进阶
+
+https://blog.csdn.net/newchenxf/article/details/122432833
+
+https://youtu.be/rmPFQQHQAXg
+
+参考别人做的任务系统是什么样的：
+
+![image-20230115215706563](zyy恐怖游戏制作.assets/image-20230115215706563.png)
+
+
+
+![image-20230115220008069](zyy恐怖游戏制作.assets/image-20230115220008069.png)
+
+
+
+![image-20230115220809667](zyy恐怖游戏制作.assets/image-20230115220809667.png)
+
+![image-20230115220120207](zyy恐怖游戏制作.assets/image-20230115220120207.png)
+
+![image-20230115220441880](zyy恐怖游戏制作.assets/image-20230115220441880.png)
+
+
+
+策划会先：
+
+![image-20230115220510062](zyy恐怖游戏制作.assets/image-20230115220510062.png)
+
+
+
+![image-20230115220528214](zyy恐怖游戏制作.assets/image-20230115220528214.png)
+
+
+
+具体运作
+
+![image-20230115221709282](zyy恐怖游戏制作.assets/image-20230115221709282.png)
+
+查询你到了哪一步
+
+
+
+![image-20230115221849117](zyy恐怖游戏制作.assets/image-20230115221849117.png)
+
+
+
+L1-Q1-S1-
+
+Line1-Quest1-Step1
+
+waiting
+
+accept-
+
+completed
+
+
+
 **已经有的功能点：**
 
 切换人物
@@ -1859,6 +2127,26 @@ https://blog.csdn.net/weixin_41767230/article/details/109356322
 敌人状态机
 
 
+
+## shader
+
+#### 鬼魂/圣遗物边框效果（边缘发光+中间填充+纹理拧转）
+
+<img src="zyy恐怖游戏制作.assets/9]XKDGJ_`AL%Z300BXOWA-16737977920131.png" alt="img" style="zoom:50%;" />
+
+边缘发光
+
+![image-20230115235032225](zyy恐怖游戏制作.assets/image-20230115235032225.png)
+
+中间填充
+
+![image-20230115235052984](zyy恐怖游戏制作.assets/image-20230115235052984.png)
+
+<img src="zyy恐怖游戏制作.assets/image-20230115234700156.png" alt="image-20230115234700156" style="zoom: 50%;" />
+
+纹理拧转
+
+![image-20230115235108918](zyy恐怖游戏制作.assets/image-20230115235108918.png)
 
 ## 一些图片与其来源记录
 

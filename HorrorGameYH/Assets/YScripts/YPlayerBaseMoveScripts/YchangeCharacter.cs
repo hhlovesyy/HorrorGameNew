@@ -22,7 +22,7 @@ public class YchangeCharacter : MonoBehaviour
     {
         if (YCameraManager.instance.isDialog)
         {
-            Debug.Log("当前正在对话 无法切换角色");
+            //Debug.Log("当前正在对话 无法切换角色");
             return;
         }
         if (Input.GetKeyDown(KeyCode.Alpha1))
