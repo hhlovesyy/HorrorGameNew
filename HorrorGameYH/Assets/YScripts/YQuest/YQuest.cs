@@ -26,4 +26,6 @@ public class YQuest
     public int goldRewards;
     public int yuanshiRewards;
 
+    [Header("搜集任务")] public int requireAmount;
+
 }

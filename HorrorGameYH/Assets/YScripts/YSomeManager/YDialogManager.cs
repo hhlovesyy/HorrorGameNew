@@ -42,7 +42,12 @@ public class YDialogManager : MonoBehaviour
 
     public bool cursorOut;
 
+    [Header("QuestAbout")]
     public YQuestable CurQuestable;//当前正在说话的对象 有什么任务
+
+    public YQuestTarget questTarget;
+    public YTalk talkable;
+    
     private void Awake()
     {
         if (instance == null) 
@@ -116,11 +121,8 @@ public class YDialogManager : MonoBehaviour
             // YCameraManager.instance.DialogCamera.gameObject.SetActive(false);
             YCameraManager.instance.changeDialogCamera(null,false);
             
-            if (CurQuestable == null)
-            {
-                return;//有的NPC没有任务
-            }
-            CurQuestable.DelegateQuest();//对话结束 发放委托
+            UpdateQuestAbout();
+            
         }
     }
     public void showDialog(string[] lines)
@@ -224,16 +226,32 @@ public class YDialogManager : MonoBehaviour
                 playerGo.GetComponent<YPlayerMovement>()
                     .canMove = true;
                 dialogAssetIndex = 0;
-                
-                // YCameraManager.instance.DialogCamera.gameObject.SetActive(false);
-                YCameraManager.instance.changeDialogCamera(null,false);
 
-                if (CurQuestable == null)
-                {
-                    return;//有的NPC没有任务
-                }
-                CurQuestable.DelegateQuest();//对话结束 发放委托
+                // YCameraManager.instance.DialogCamera.gameObject.SetActive(false);
+                YCameraManager.instance.changeDialogCamera(null, false);
             }
+            
+            if (cell[0] == "TriggerQuest" && int.Parse(cell[1]) == dialogAssetIndex)
+            {
+                Debug.Log("cell[0]"+cell[0]);
+                //接下任务
+                UpdateQuestAbout();
+                
+                //end操作
+                dialogBox.SetActive(false);
+                playerGo.GetComponent<YPlayerMovement>()
+                    .canMove = true;
+                dialogAssetIndex = 0;
+                
+                YCameraManager.instance.changeDialogCamera(null, false);
+            }
+
+            //questAbout
+            // if (cell[8] !=""&& int.Parse(cell[1]) == dialogAssetIndex)
+            // {
+            //     Debug.Log("c"+cell[8]);
+            // }
+
         }
     }
 
@@ -270,10 +288,69 @@ public class YDialogManager : MonoBehaviour
         }
     }
 
-    // public void changeDialogCamera(Transform target)
-    // {
-    //     DialogCamera.gameObject.SetActive(true);
-    //     DialogCamera.transform.position = target.position + target.forward * 0.9f;
-    //     DialogCamera.transform.LookAt(target);
-    // }
+    public void UpdateQuestAbout()
+    {
+        if (CurQuestable == null)
+        {
+            //return;//有的NPC不会分配任务
+            Debug.Log("NPC没有任务");
+        }
+        else
+        {
+            CurQuestable.DelegateQuest();//对话结束 发放委托
+            YQuestManager.instance.updateQuestList();
+        }
+        
+        //是某个任务完成需要接触的目标
+        if (questTarget != null)
+        {
+            //我们希望 只有当接取任务之后才会去判断是否到达等
+            for (int i = 0; i < YPlayerProp.instance.questList.Count; i++)
+            {
+                //任务已经被接取
+                if (questTarget.questName == YPlayerProp.instance.questList[i].QuestName)
+                {
+                    questTarget.hasTalked = true;
+                    questTarget.QuestCompleted();
+                }
+            }
+        }
+        else
+        {
+            return;
+        }
+        // Debug.Log(checkQuestIsCompleted());
+        // if (checkQuestIsCompleted() && CurQuestable.isFinished == false) 
+        // {
+        //     showDialog(talkable.congratesLines);
+        //     CurQuestable.isFinished = true;
+        // }
+        // else
+        // {
+        //    
+        // }
+
+    
+    }
+
+    public bool checkQuestIsCompleted()
+    {
+        //并未带有任务
+        if (CurQuestable == null)
+        {
+            return false;
+        }
+
+        for (int i = 0; i < YPlayerProp.instance.questList.Count; i++)
+        {
+            if (CurQuestable.quest.QuestName == YPlayerProp.instance.questList[i].QuestName
+                &&YPlayerProp.instance.questList[i].questStates==YQuest.QuestStates.Completed)
+            {
+                CurQuestable.quest.questStates = YQuest.QuestStates.Completed;
+                return true;
+            }
+        }
+        
+        return false;
+    }
 }
