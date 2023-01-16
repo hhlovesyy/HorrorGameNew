@@ -46,10 +46,14 @@ public class HGenshinArtifactsShow : MonoBehaviour
 
     private bool isCheckingArtifact;
     public Transform artifactDetailLocation;
+    public Transform artifactQianghuaLocation;
     private Transform chooseArtifactPos;
     private int curChooseIndex;
     //public Transform[] artifactsPoses;
-    public ArtifactPosStruct[] artifactPosStructs;
+    private ArtifactPosStruct[] artifactPosStructs;
+    public GameObject fakeArtifact;
+    
+    
 
     void ArtifactsRotate()
     {
@@ -113,8 +117,10 @@ public class HGenshinArtifactsShow : MonoBehaviour
                      }
                      else
                      {
-                          worldPos[i].gameObject.transform.localScale = new Vector3(0.3f,0.3f,0.3f);
-                          worldPos[i].gameObject.transform.position = artifactDetailLocation.position;
+                          curChooseIndex = i;
+                          print(curChooseIndex);
+                          UpdateArtifactDetailTransform(curChooseIndex, artifactDetailLocation);
+                          HArtifactsUIManager.instance.SetUIStates(ArtifactShowState.ClickForDetail);
                      }
                  }
                 isCheckingArtifact = true;
@@ -150,6 +156,8 @@ public class HGenshinArtifactsShow : MonoBehaviour
         }
         //print("llalala");
         //print(worldPos[0].gameObject.transform.position);
+        curChooseIndex = -1;
+        
         ResetArtifacts();
     }
 
@@ -163,15 +171,49 @@ public class HGenshinArtifactsShow : MonoBehaviour
             worldPos[i].gameObject.transform.rotation = artifactPosStructs[i].artifactRot;
             worldPos[i].gameObject.transform.localScale = artifactPosStructs[i].artifactScale;
         }
+        HArtifactsUIManager.instance.SetUIStates(ArtifactShowState.IdlingRotate);
+        fakeArtifact.gameObject.SetActive(false);
     }
+
+    public void RotateToCurArtifact()
+    {
+        //旋转到上次旋转的位置
+        artifactsCenter.Rotate(Vector3.up, 72*curChooseIndex, Space.World);
+        curChooseIndex = -1;
+    }
+    
     //退出当前界面的效果
     void DealWithExit()
     {
         if (Input.GetKey(KeyCode.Escape))
         {
             ResetArtifacts();
+            //RotateToCurArtifact();
             isCheckingArtifact = false;
         }
+    }
+
+    public void UpdateArtifactDetailTransform(int artifactLocateIndex,Transform destination)
+    {
+        worldPos[artifactLocateIndex].position = destination.position;
+        worldPos[artifactLocateIndex].localScale = destination.localScale;
+    }
+
+    /// <summary>
+    /// 暂时测试的按钮:当点击随机获取一个圣遗物按钮的时候调用这个函数
+    /// </summary>
+    public void OnRollingArtifactBtnClick()
+    {
+        if (curChooseIndex >= 0)
+        {
+            //UpdateArtifactDetailTransform(curChooseIndex,artifactQianghuaLocation);
+            //todo:随机roll出来的圣遗物是一个新的物体会比较不容易出bug,后面应该会改逻辑
+            
+            HArtifactsUIManager.instance.SetUIStates(ArtifactShowState.RollingAnArtifact);
+            worldPos[curChooseIndex].gameObject.SetActive(false);
+            fakeArtifact.gameObject.SetActive(true);
+        }
+    
     }
 
     // Update is called once per frame
@@ -182,4 +224,6 @@ public class HGenshinArtifactsShow : MonoBehaviour
         DealWithExit();
 
     }
+    
+    
 }

@@ -17,6 +17,17 @@ public class HArtifactAttr
     [SerializeField] private float _defensePercentageAdd;
     [SerializeField] private int _defenseValueAdd;
 
+
+    public HArtifactAttr()
+    {
+        
+        
+    }
+    //构造函数,传入Dict,表示这个圣遗物的所有词条
+    public HArtifactAttr(Dictionary<string,float> dict)
+    {
+        
+    }
     public float DefensePercentageAdd
     {
         set { _defensePercentageAdd = value; }

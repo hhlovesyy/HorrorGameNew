@@ -25,6 +25,21 @@ public enum AttackType
     ChargedAttack, //重击,
 }
 
+public enum UISetState
+{
+    Show,
+    Disappear,
+}
+
+//与圣遗物界面有关的相关状态
+public enum ArtifactShowState
+{
+    IdlingRotate,
+    ClickForDetail,
+    RollingAnArtifact,
+    ExitToLastPage,
+}
+
 public class HEnumsUsedCommon
 {
  
